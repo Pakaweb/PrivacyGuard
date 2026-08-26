@@ -1,0 +1,2340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PrivacyGuard — UI preview</title>
+  <style>
+    :root {
+      --accent: #60cdff;
+      --accent-text: #003e52;
+      --bg: #1c1c1c;
+      --mica: radial-gradient(1200px 600px at 10% -10%, rgba(96, 205, 255, 0.16), transparent 50%),
+              radial-gradient(900px 500px at 110% 10%, rgba(136, 108, 228, 0.12), transparent 45%),
+              #202020;
+      --surface: rgba(255, 255, 255, 0.04);
+      --card: rgba(255, 255, 255, 0.045);
+      --stroke: rgba(255, 255, 255, 0.09);
+      --text: #ffffff;
+      --muted: rgba(255, 255, 255, 0.62);
+      --nav: rgba(32, 32, 32, 0.72);
+      --hover: rgba(255, 255, 255, 0.06);
+      --selected: rgba(96, 205, 255, 0.14);
+      --success: #10893e;
+      --caution: #c47f17;
+      --critical: #c42b1c;
+      --info: #0078d4;
+      --shadow: 0 24px 80px rgba(0, 0, 0, 0.45);
+      --titlebar: 48px;
+      --nav-w: 260px;
+      --radius: 12px;
+      --ring-inner: #252525;
+      --ring-track: rgba(255, 255, 255, 0.10);
+      --ring-edge: rgba(255, 255, 255, 0.06);
+    }
+
+    [data-theme="light"] {
+      --accent: #005fb8;
+      --accent-text: #ffffff;
+      --bg: #e8e8e8;
+      --mica: radial-gradient(1200px 600px at 10% -10%, rgba(0, 95, 184, 0.12), transparent 50%),
+              radial-gradient(900px 500px at 110% 10%, rgba(136, 108, 228, 0.08), transparent 45%),
+              #f3f3f3;
+      --surface: rgba(255, 255, 255, 0.7);
+      --card: #ffffff;
+      --stroke: rgba(0, 0, 0, 0.08);
+      --text: #1a1a1a;
+      --muted: rgba(0, 0, 0, 0.58);
+      --nav: rgba(243, 243, 243, 0.8);
+      --hover: rgba(0, 0, 0, 0.05);
+      --selected: rgba(0, 95, 184, 0.12);
+      --shadow: 0 24px 80px rgba(0, 0, 0, 0.18);
+      --ring-inner: #ffffff;
+      --ring-track: #e2e2e2;
+      --ring-edge: rgba(0, 0, 0, 0.08);
+    }
+
+    * { box-sizing: border-box; }
+    html[dir="rtl"] nav { border-right: none; border-left: 1px solid var(--stroke); }
+    html, body { height: 100%; margin: 0; }
+    body {
+      font-family: "Segoe UI Variable", "Segoe UI", -apple-system, BlinkMacSystemFont, sans-serif;
+      background:
+        radial-gradient(ellipse at 20% 0%, #3a4a6a 0%, transparent 50%),
+        radial-gradient(ellipse at 90% 100%, #2a1f3d 0%, transparent 45%),
+        #0b0d12;
+      color: var(--text);
+      display: grid;
+      place-items: center;
+      padding: 28px 16px;
+    }
+
+    .stage { width: min(1280px, 100%); }
+    .hint {
+      color: rgba(255,255,255,0.72);
+      font-size: 13px;
+      margin: 0 0 12px;
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .hint strong { color: #fff; }
+
+    .window {
+      background: var(--mica);
+      border: 1px solid var(--stroke);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      min-height: 760px;
+      display: grid;
+      grid-template-rows: var(--titlebar) 1fr;
+      backdrop-filter: blur(40px);
+    }
+
+    .titlebar {
+      display: flex;
+      align-items: center;
+      padding: 0 8px 0 16px;
+      gap: 10px;
+      user-select: none;
+      border-bottom: 1px solid var(--stroke);
+    }
+    .brand { display: flex; align-items: center; gap: 8px; font-size: 12px; opacity: 0.92; flex: 1; }
+    .brand svg { width: 16px; height: 16px; }
+    .badge {
+      font-size: 12px;
+      padding: 4px 10px;
+      border-radius: 12px;
+      background: var(--hover);
+    }
+    .badge.admin { background: rgba(16, 137, 62, 0.25); color: #9fecc0; }
+    [data-theme="light"] .badge.admin { color: #0f7b0f; background: #dff6e7; }
+
+    .btn {
+      border: none;
+      background: var(--hover);
+      color: var(--text);
+      padding: 7px 14px;
+      border-radius: 4px;
+      font: inherit;
+      font-size: 13px;
+      cursor: pointer;
+    }
+    .btn:hover { filter: brightness(1.08); }
+    .btn.accent {
+      background: var(--accent);
+      color: var(--accent-text);
+      font-weight: 600;
+    }
+    .btn.ghost { background: transparent; border: 1px solid var(--stroke); }
+
+    .caption {
+      display: flex;
+      margin-left: 12px;
+    }
+    .caption span {
+      width: 46px; height: 32px;
+      display: grid; place-items: center;
+      opacity: 0.75;
+      font-size: 10px;
+    }
+
+    .shell {
+      display: grid;
+      grid-template-columns: var(--nav-w) 1fr;
+      min-height: 712px;
+    }
+
+    nav {
+      background: var(--nav);
+      border-right: 1px solid var(--stroke);
+      padding: 8px;
+      display: flex;
+      flex-direction: column;
+    }
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      color: var(--text);
+      font-size: 14px;
+    }
+    .nav-item:hover { background: var(--hover); }
+    .nav-item.active {
+      background: var(--selected);
+      font-weight: 600;
+    }
+    .nav-item svg { width: 18px; height: 18px; opacity: 0.9; }
+    .nav-spacer { flex: 1; }
+
+    main {
+      padding: 16px 28px 24px;
+      overflow: auto;
+      max-height: 712px;
+    }
+
+    h1 { font-size: 28px; font-weight: 600; margin: 0 0 4px; }
+    .sub { color: var(--muted); margin: 0 0 16px; font-size: 14px; }
+    h2 { font-size: 18px; margin: 16px 0 12px; font-weight: 600; }
+    h3 { font-size: 16px; margin: 18px 0 8px; font-weight: 600; }
+
+    .row { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+    .grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+    .grid2 { display: grid; grid-template-columns: 2fr 1fr; gap: 18px; }
+    .hist-toolbar { display: flex; gap: 6px; margin: 4px 0 10px; }
+    .hist-filter {
+      font-size: 12px; padding: 5px 10px; border-radius: 8px;
+      background: transparent; border: 1px solid var(--stroke); color: var(--text);
+    }
+    .hist-filter.on { background: var(--selected); border-color: rgba(96,205,255,.45); font-weight: 600; }
+    .hist-day {
+      font-size: 12px; font-weight: 600; color: var(--muted);
+      margin: 12px 0 8px; letter-spacing: .02em;
+    }
+    .hist-day:first-child { margin-top: 0; }
+    .hist-row {
+      display: flex; gap: 10px; align-items: flex-start;
+      padding: 10px 12px 10px 0; border-radius: 10px;
+      border: 1px solid var(--stroke); background: rgba(255,255,255,.04);
+      margin-bottom: 8px; cursor: pointer;
+      transition: background .22s cubic-bezier(.2,.8,.2,1), transform .22s cubic-bezier(.2,.8,.2,1), box-shadow .22s ease, border-color .22s ease;
+    }
+    .hist-row:hover {
+      transform: translateY(-4px);
+      background: rgba(255,255,255,.09);
+      box-shadow: 0 14px 28px rgba(0,0,0,.34);
+      border-color: rgba(96, 205, 255, 0.28);
+    }
+    .hist-row.sel {
+      border-color: rgba(96,205,255,.45);
+      background: rgba(96,205,255,.10);
+    }
+    .hist-row.sel:hover {
+      background: rgba(96,205,255,.16);
+      border-color: rgba(96,205,255,.7);
+      box-shadow: 0 14px 28px rgba(0,0,0,.34);
+    }
+    .hist-bar { width: 3px; align-self: stretch; border-radius: 3px 0 0 3px; flex-shrink: 0; }
+    .hist-bar.protect { background: #60cdff; }
+    .hist-bar.collect { background: #e88a1a; }
+    .hist-bar.ok { background: #16a35e; }
+    .hist-check { margin: 8px 0 0 8px; }
+    .val-chip {
+      display: inline-block; font-size: 11px; padding: 3px 8px; border-radius: 8px;
+      background: rgba(255,255,255,.06);
+    }
+    .val-chip.from { opacity: .78; }
+    .val-chip.to.protect { background: rgba(22,163,94,.16); color: #6ccb5f; font-weight: 600; }
+    [data-theme="light"] .val-chip.to.protect {
+      background: #c4ebd1;
+      color: #0b6a14;
+      box-shadow: inset 0 0 0 1px #2e9a4a;
+    }
+    [data-theme="light"] .chip-badge.reverted {
+      background: #b7e6c6;
+      color: #0b6a14;
+      border-color: #10893e;
+    }
+    [data-theme="light"] .chip-badge.on {
+      background: #c4ebd1;
+      color: #0b6a14;
+    }
+    .val-chip.to.collect { background: rgba(232,138,26,.16); color: #e8a838; font-weight: 600; }
+    .val-arrow { opacity: .5; font-size: 11px; margin: 0 4px; }
+    .hist-empty {
+      text-align: center; padding: 36px 16px; color: var(--muted);
+    }
+    .hist-empty .well {
+      width: 56px; height: 56px; border-radius: 28px; margin: 0 auto 10px;
+      background: rgba(255,255,255,.06); display: grid; place-items: center;
+    }
+    .hist-empty .well svg { width: 22px; height: 22px; fill: currentColor; opacity: .7; }
+    .hist-empty strong { display: block; color: var(--text); margin: 0 0 4px; font-size: 14px; }
+    .hist-empty p { margin: 0; font-size: 12px; }
+    .chip-badge.reverted {
+      background: rgba(22, 163, 94, 0.24); color: #8fdc86;
+      border: 1px solid #6ccb5f; font-size: 11px; padding: 4px 9px;
+    }
+    .hist-count { font-size: 12px; color: var(--muted); }
+    .snap-icon {
+      width: 36px; height: 36px; border-radius: 10px;
+      background: rgba(96,205,255,.14); color: var(--accent);
+      display: grid; place-items: center; flex-shrink: 0;
+    }
+    .snap-icon svg { width: 16px; height: 16px; fill: currentColor; }
+    .restore-card {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+    }
+    .restore-card h2 {
+      margin: 0 0 2px;
+      font-size: 18px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+    }
+    .restore-card-sub {
+      margin: 0 0 14px;
+      font-size: 12px;
+      line-height: 1.35;
+    }
+    .restore-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      flex: 1;
+    }
+    .restore-row.hist-row {
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 0;
+      padding: 9px 10px 9px 0;
+      background: rgba(255,255,255,.03);
+      border-color: rgba(255,255,255,.07);
+      box-shadow: none;
+    }
+    .restore-row .hist-bar {
+      width: 3px;
+      border-radius: 3px 0 0 3px;
+      opacity: .72;
+    }
+    .restore-row .hist-check {
+      margin: 0 0 0 8px;
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+      accent-color: var(--accent);
+    }
+    .restore-row .snap-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: rgba(255,255,255,.05);
+      color: rgba(255,255,255,.72);
+    }
+    .restore-row .grow strong {
+      display: block;
+      font-size: 13.5px;
+      font-weight: 650;
+      letter-spacing: -0.01em;
+      line-height: 1.25;
+    }
+    .restore-row .tiny {
+      margin-top: 3px;
+      font-size: 11px;
+      line-height: 1.3;
+      opacity: .82;
+    }
+    .restore-row .impact {
+      margin-top: 4px !important;
+      font-size: 11px;
+      font-weight: 600;
+      opacity: .78;
+    }
+    .restore-row .chev {
+      margin: 0 2px 0 0;
+      align-self: flex-start;
+      padding-top: 2px;
+      width: 16px;
+      text-align: center;
+      font-size: 11px;
+      line-height: 1;
+      opacity: .42;
+      flex-shrink: 0;
+    }
+    .restore-row:hover {
+      transform: translateY(-1px);
+      background: rgba(255,255,255,.07);
+      border-color: rgba(96,205,255,.22);
+      box-shadow: 0 8px 18px rgba(0,0,0,.22);
+    }
+    .restore-row.sel {
+      background: rgba(96,205,255,.16);
+      border-color: rgba(96,205,255,.58);
+      box-shadow: inset 0 0 0 1px rgba(96,205,255,.14);
+    }
+    .restore-row.sel .hist-bar { opacity: 1; }
+    .restore-row.sel .snap-icon {
+      background: rgba(96,205,255,.18);
+      color: var(--accent);
+    }
+    .restore-row.sel .impact { opacity: .95; }
+    .restore-row.sel:hover {
+      transform: translateY(-1px);
+      background: rgba(96,205,255,.20);
+      border-color: rgba(96,205,255,.78);
+      box-shadow: 0 8px 18px rgba(0,0,0,.24), inset 0 0 0 1px rgba(96,205,255,.18);
+    }
+    .restore-actions {
+      margin-top: auto;
+      padding-top: 14px;
+      border-top: 1px solid var(--stroke);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .restore-actions .hist-count {
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: .01em;
+    }
+    .restore-actions .btn.accent {
+      width: 100%;
+      min-height: 40px;
+      border-radius: 4px;
+      font-weight: 600;
+    }
+    .card.restore-card:hover {
+      transform: none;
+      background: var(--card);
+      border-color: var(--stroke);
+    }
+    [data-theme="light"] .restore-row.hist-row {
+      background: rgba(0,0,0,.03);
+      border-color: rgba(0,0,0,.08);
+    }
+    [data-theme="light"] .restore-row .snap-icon {
+      background: rgba(0,0,0,.05);
+      color: rgba(0,0,0,.55);
+    }
+    [data-theme="light"] .restore-row:hover {
+      background: rgba(0,0,0,.05);
+      border-color: rgba(0,95,184,.22);
+      box-shadow: 0 8px 18px rgba(0,0,0,.08);
+    }
+    [data-theme="light"] .restore-row.sel {
+      background: rgba(0,95,184,.12);
+      border-color: rgba(0,95,184,.48);
+      box-shadow: inset 0 0 0 1px rgba(0,95,184,.1);
+    }
+    [data-theme="light"] .restore-row.sel .snap-icon {
+      background: rgba(0,95,184,.12);
+      color: var(--accent);
+    }
+    [data-theme="light"] .restore-row.sel:hover {
+      background: rgba(0,95,184,.16);
+      border-color: rgba(0,95,184,.62);
+    }
+    .hist-detail {
+      margin-top: 6px; padding: 5px 8px; border-radius: 8px;
+      background: rgba(255,255,255,.05); font-size: 11px; line-height: 1.35;
+      color: var(--muted); display: none;
+    }
+    .hist-row.open .hist-detail { display: block; }
+    .hist-row.open .chev { transform: rotate(180deg); }
+    .chev { opacity: .6; font-size: 10px; margin-top: 4px; transition: transform .15s; }
+    .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--stroke);
+      border-radius: var(--radius);
+      padding: 16px 18px 14px;
+      transition: border-color .15s, background .15s, transform .15s;
+    }
+    .card:hover {
+      border-color: rgba(96, 205, 255, 0.35);
+      background: rgba(255,255,255,0.06);
+      transform: translateY(-2px);
+    }
+
+    .profile-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+      max-width: 1120px;
+    }
+    .profile-card {
+      min-height: 420px;
+      padding: 18px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      transition: border-color .22s ease, background .22s ease, transform .22s cubic-bezier(.2,.8,.2,1), box-shadow .22s ease;
+    }
+    .card.profile-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.38);
+      background: rgba(255,255,255,0.085);
+    }
+    .profile-card.recommended {
+      border-width: 2px;
+      border-color: rgba(96, 205, 255, 0.7);
+      background: linear-gradient(180deg, rgba(96, 205, 255, 0.10), var(--card) 46%);
+    }
+    .profile-card.recommended:hover {
+      border-color: rgba(96, 205, 255, 0.92);
+      background: linear-gradient(180deg, rgba(96, 205, 255, 0.16), rgba(255,255,255,0.08) 46%);
+    }
+    .profile-card.maximum { border-color: rgba(232, 138, 26, 0.55); }
+    .profile-card.maximum:hover { border-color: rgba(232, 138, 26, 0.8); }
+    .profile-card.restore { border-color: rgba(255, 255, 255, 0.08); }
+    .profile-card.active {
+      border-width: 2px;
+      border-color: #16a35e;
+    }
+    .profile-card.active:hover { border-color: #2cc474; }
+    .profile-head { display: flex; gap: 12px; align-items: flex-start; }
+    .profile-head h4 { margin: 0; font-size: 18px; font-weight: 600; }
+    .profile-icon {
+      width: 44px; height: 44px; border-radius: 12px;
+      display: grid; place-items: center; flex-shrink: 0;
+      background: rgba(255,255,255,0.06);
+    }
+    .profile-icon svg { width: 18px; height: 18px; fill: currentColor; }
+    .profile-icon.rec { background: rgba(96, 205, 255, 0.16); color: #60cdff; }
+    .profile-icon.max { background: rgba(232, 138, 26, 0.16); color: #e88a1a; }
+    .profile-icon.bal { color: rgba(255,255,255,0.9); }
+    .profile-icon.rst { background: rgba(255,255,255,0.04); color: rgba(255,255,255,0.55); }
+    .profile-badges { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
+    .chip-badge {
+      font-size: 10px; font-weight: 600; padding: 3px 8px; border-radius: 8px;
+    }
+    .chip-badge.rec { background: var(--accent); color: var(--accent-text); }
+    .chip-badge.on { background: rgba(22, 163, 94, 0.16); color: #6ccb5f; }
+    .impact {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--accent);
+      margin-top: 2px;
+    }
+    .last-applied {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 2px;
+      opacity: 0.88;
+    }
+    .last-modified {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 2px;
+      opacity: 0.88;
+    }
+    .last-applied[hidden], .profile-active[hidden] { display: none !important; }
+    button:disabled, .btn[disabled] { opacity: 0.55; cursor: default; pointer-events: none; }
+    .chips { display: flex; flex-wrap: wrap; gap: 6px; flex: 1; align-content: flex-start; }
+    .chip {
+      font-size: 11px; padding: 5px 8px; border-radius: 8px;
+      background: rgba(255,255,255,0.06);
+    }
+    .note {
+      display: flex; gap: 8px; padding: 8px 10px; border-radius: 8px;
+      border-left: 3px solid var(--caution);
+      background: rgba(196, 127, 23, 0.14);
+      font-size: 12px; line-height: 1.35;
+    }
+    .note.max { border-left-color: #f59e0b; background: rgba(232, 138, 26, 0.30); }
+    .note.rst { border-left-color: rgba(255,255,255,0.22); background: rgba(255,255,255,0.04); }
+    .note .t { font-weight: 600; font-size: 11px; margin: 0 0 2px; }
+    .note p { margin: 0; opacity: 0.92; }
+    .note svg { width: 12px; height: 12px; fill: currentColor; margin-top: 2px; flex-shrink: 0; }
+    .btn.tall { min-height: 40px; font-weight: 600; }
+    .btn.muted { opacity: 0.88; }
+    .profile-card .btn { width: 100%; margin-top: 4px; }
+    .profile-card .btn[disabled] { opacity: 0.55; cursor: default; }
+    @media (max-width: 900px) { .profile-grid { grid-template-columns: 1fr; } }
+    .hero { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: 16px; margin-bottom: 8px; align-items: stretch; }
+    .hero > .card {
+      min-height: 268px;
+      min-width: 0;
+      padding: 22px 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .telemetry-card {
+      gap: 16px;
+      justify-content: flex-start;
+    }
+    .telemetry-head {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+    .telemetry-head strong { display: block; font-size: 15px; }
+    .telemetry-card select {
+      appearance: none;
+      -webkit-appearance: none;
+      width: 100%;
+      margin: 0;
+      min-height: 40px;
+      border-radius: 8px;
+      padding: 10px 44px 10px 14px;
+      border: 1px solid var(--stroke);
+      background-color: var(--surface);
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='none' stroke='%23c8c8c8' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round' d='M2.4 4.4 6 8l3.6-3.6'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 16px center;
+      background-size: 12px;
+      color: var(--text);
+      font: inherit;
+      cursor: pointer;
+    }
+    [data-theme="light"] .telemetry-card select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='none' stroke='%23555555' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round' d='M2.4 4.4 6 8l3.6-3.6'/%3E%3C/svg%3E");
+    }
+    .telemetry-apply {
+      width: 100%;
+      min-height: 40px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .telemetry-hint {
+      margin: 0;
+      line-height: 1.5;
+    }
+    .score-wrap { display: flex; gap: 28px; align-items: center; width: 100%; }
+    .ring {
+      width: 168px; height: 168px; border-radius: 50%;
+      background:
+        conic-gradient(from -90deg, #c42b1c 0%, #e88a1a 24%, var(--ring-track) 38% 100%);
+      display: grid; place-items: center; flex-shrink: 0;
+    }
+    .ring-inner {
+      width: 132px; height: 132px; border-radius: 50%;
+      background: var(--ring-inner);
+      color: var(--text);
+      display: grid; place-items: center; text-align: center;
+      box-shadow: inset 0 0 0 1px var(--ring-edge);
+    }
+    .ring-inner .tiny {
+      color: var(--muted);
+      font-weight: 600;
+    }
+    [data-theme="light"] .ring {
+      box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.06);
+    }
+    [data-theme="light"] .profile-icon.bal { color: #1a1a1a; }
+    [data-theme="light"] .profile-icon.rst { color: rgba(0,0,0,0.45); }
+    [data-theme="light"] .chip { background: rgba(0,0,0,0.05); }
+    [data-theme="light"] .note.rst { border-left-color: rgba(0,0,0,0.18); background: rgba(0,0,0,0.04); }
+    .dot {
+      width: 9px; height: 9px; border-radius: 50%;
+      margin-top: 10px; flex-shrink: 0;
+    }
+    .dot.bad { background: #c42b1c; }
+    .dot.mid { background: #e88a1a; }
+    .dot.ok { background: #16a35e; }
+    .icon-box {
+      width: 40px; height: 40px; border-radius: 10px;
+      background: var(--hover); display: grid; place-items: center; flex-shrink: 0;
+    }
+    .icon-box svg { width: 18px; height: 18px; fill: currentColor; }
+    .elevate {
+      display: flex; gap: 16px; align-items: center;
+      padding: 16px 18px; border-radius: 12px; margin-bottom: 16px;
+      background: rgba(196, 127, 23, 0.16); border: 1px solid var(--stroke);
+    }
+    .dash-alerts {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin: 0 0 20px;
+    }
+    .dash-alerts .toast,
+    .dash-alerts .infobar {
+      margin: 0;
+      border-radius: 10px;
+      padding: 10px 14px;
+    }
+    .dash-banner {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      padding: 10px 14px;
+      border-radius: 10px;
+      margin: 0;
+      border: 1px solid var(--stroke);
+      overflow: hidden;
+      position: relative;
+    }
+    .dash-banner::before {
+      content: "";
+      width: 3px;
+      align-self: stretch;
+      margin: -10px 0 -10px -14px;
+      flex-shrink: 0;
+      border-radius: 10px 0 0 10px;
+    }
+    .dash-banner.restart {
+      background: rgba(201, 161, 91, 0.12);
+    }
+    .dash-banner.restart::before { background: #c9a15b; }
+    .dash-banner.reset {
+      background: rgba(126, 162, 200, 0.12);
+    }
+    .dash-banner.reset::before { background: #7ea2c8; }
+    .dash-banner .icon-circle {
+      width: 32px;
+      height: 32px;
+      border-radius: 16px;
+      font-size: 14px;
+    }
+    .dash-banner .grow { min-width: 0; }
+    .dash-banner .actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      flex-shrink: 0;
+      margin: 0;
+    }
+    .dash-admin {
+      display: none;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 12px;
+      border-radius: 10px;
+      border: 1px solid var(--stroke);
+      background: var(--card);
+      font-size: 13px;
+    }
+    .dash-admin.on { display: flex; }
+    .dash-admin .ok { color: #8fdc86; }
+    [data-theme="light"] .dash-banner.restart { background: #f7f1e4; }
+    [data-theme="light"] .dash-banner.restart::before { background: #9a7420; }
+    [data-theme="light"] .dash-banner.reset { background: #eef3f8; }
+    [data-theme="light"] .dash-banner.reset::before { background: #4f7394; }
+    [data-theme="light"] .dash-admin .ok { color: #0b6a14; }
+    #dashboard > .row { margin-bottom: 20px; }
+    #dashboard > .row .sub { margin-bottom: 0; }
+    .icon-circle {
+      width: 36px; height: 36px; border-radius: 18px;
+      background: var(--hover); display: grid; place-items: center; flex-shrink: 0;
+    }
+    .section-h { font-size: 15px; font-weight: 600; margin: 12px 0 2px; letter-spacing: .02em; }
+    .section-s { font-size: 12px; color: var(--muted); margin: 0 0 14px; }
+    .badge-quiet { font-size: 11px; font-weight: 600; color: #e8b04a; }
+    .badge-strong {
+      font-size: 10px; font-weight: 600; color: #fff;
+      background: #c42b1c; padding: 2px 7px; border-radius: 6px; opacity: .9;
+    }
+    details.how { margin: 8px 0 20px; color: var(--muted); font-size: 13px; }
+    details.how summary { cursor: pointer; color: var(--text); font-weight: 600; }
+    .toast {
+      display: none; margin-bottom: 12px;
+      border-left: 4px solid var(--success);
+    }
+    .toast.on { display: flex; }
+    .sw-mini { transform: scale(.9); transform-origin: right center; }
+
+    .infobar {
+      display: flex;
+      gap: 12px;
+      padding: 12px 14px;
+      border-radius: 6px;
+      background: var(--card);
+      border: 1px solid var(--stroke);
+      margin-bottom: 16px;
+      border-left: 4px solid var(--info);
+    }
+    .infobar.warn { border-left-color: var(--caution); }
+    .infobar.success { border-left-color: var(--success); }
+    .infobar .t { font-weight: 600; font-size: 13px; }
+    .infobar p { margin: 2px 0 0; color: var(--muted); font-size: 13px; }
+
+    .score { font-size: 36px; font-weight: 600; line-height: 1; }
+    .pill {
+      display: inline-block;
+      color: #fff;
+      font-size: 11px;
+      padding: 4px 10px;
+      border-radius: 12px;
+      vertical-align: middle;
+      margin-left: 8px;
+    }
+    .pill.ok { background: var(--success); }
+    .pill.mid { background: var(--caution); }
+    .pill.bad { background: var(--critical); }
+
+    select {
+      width: 100%;
+      padding: 8px 10px;
+      border-radius: 4px;
+      border: 1px solid var(--stroke);
+      background: var(--surface);
+      color: var(--text);
+      font: inherit;
+      margin: 8px 0;
+    }
+
+    .muted { color: var(--muted); font-size: 13px; }
+    .tiny { color: var(--muted); font-size: 12px; line-height: 1.4; }
+    .grow { flex: 1; }
+
+    .tile-head { display: flex; gap: 10px; align-items: flex-start; }
+    .tile-head h4 { margin: 0; font-size: 14px; font-weight: 600; flex: 1; }
+    .tile-foot { display: flex; justify-content: space-between; align-items: center; margin-top: 12px; }
+
+    .list { display: flex; flex-direction: column; gap: 4px; max-height: 360px; overflow: auto; }
+    .list-item {
+      padding: 10px 8px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .list-item:hover, .list-item.sel { background: var(--hover); }
+    .ok-text { color: #6ccb5f; font-size: 12px; }
+
+    .settings-section { margin-top: 16px; }
+    .settings-section h3 {
+      font-size: 16px; font-weight: 600; margin: 0 0 8px;
+      padding-bottom: 8px; border-bottom: 1px solid var(--stroke);
+    }
+    .settings-card {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px 12px 14px;
+      background: var(--card);
+      border: 1px solid var(--stroke);
+      border-radius: 12px;
+      margin-bottom: 8px;
+      position: relative;
+      overflow: hidden;
+      transition: background .18s ease, transform .18s cubic-bezier(.2,.8,.2,1), box-shadow .18s ease;
+    }
+    .settings-card::before {
+      content: "";
+      position: absolute; left: 0; top: 0; bottom: 0; width: 2px;
+      background: var(--accent); opacity: 0;
+      transition: opacity .18s ease;
+    }
+    .settings-card:hover {
+      background: rgba(255,255,255,0.07);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 22px rgba(0,0,0,.28);
+    }
+    .settings-card:hover::before { opacity: 1; }
+    .settings-card:focus-within { outline: 2px solid var(--accent); outline-offset: 2px; }
+    .settings-card .meta { flex: 1; }
+    .settings-card h4 { margin: 0; font-size: 14px; font-weight: 600; }
+    .settings-card.about h4 { font-size: 18px; }
+    .settings-icon {
+      width: 40px; height: 40px; border-radius: 10px; flex-shrink: 0;
+      background: var(--hover); display: grid; place-items: center; position: relative;
+    }
+    .settings-icon svg { width: 18px; height: 18px; fill: currentColor; }
+    .settings-icon .lock {
+      position: absolute; right: 5px; bottom: 5px; width: 9px; height: 9px;
+    }
+    .settings-lock {
+      display: flex; align-items: center; gap: 8px; opacity: .55;
+    }
+    .btn.outline {
+      background: transparent; border: 1px solid var(--stroke);
+      display: inline-flex; align-items: center; gap: 8px;
+    }
+    .btn.outline svg { width: 14px; height: 14px; fill: currentColor; }
+    .settings-card select {
+      appearance: none;
+      -webkit-appearance: none;
+      width: 260px;
+      margin: 0;
+      min-height: 48px;
+      border-radius: 8px;
+      padding: 8px 40px 8px 14px;
+      background-color: var(--surface);
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='none' stroke='%23c8c8c8' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round' d='M2.4 4.4 6 8l3.6-3.6'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+      background-size: 12px;
+      color: var(--text);
+      border: 1px solid var(--stroke);
+      font: inherit;
+      cursor: pointer;
+    }
+    [data-theme="light"] .settings-card select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='none' stroke='%23555555' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round' d='M2.4 4.4 6 8l3.6-3.6'/%3E%3C/svg%3E");
+    }
+    .switch {
+      width: 40px; height: 20px; border-radius: 10px;
+      background: #888;
+      position: relative;
+      cursor: pointer;
+    }
+    .switch.on { background: var(--accent); }
+    .switch::after {
+      content: "";
+      width: 16px; height: 16px; border-radius: 50%;
+      background: #fff;
+      position: absolute; top: 2px; left: 2px;
+      transition: left .15s;
+    }
+    .switch.on::after { left: 22px; }
+    .switch.locked { opacity: 0.5; cursor: not-allowed; }
+
+    .search-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px 12px;
+      margin: 0 0 20px;
+    }
+    .search-wrap {
+      flex: 1 1 280px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 40px;
+      padding: 0 12px;
+      border-radius: 8px;
+      border: 1px solid var(--stroke);
+      background: var(--surface);
+    }
+    .search-wrap svg { width: 16px; height: 16px; fill: var(--muted); flex-shrink: 0; }
+    .search-wrap input {
+      flex: 1;
+      border: 0;
+      background: transparent;
+      color: var(--text);
+      font: inherit;
+      outline: none;
+      min-width: 0;
+      padding: 10px 0;
+      height: 40px;
+    }
+    .search-wrap input[type="search"]::-webkit-search-cancel-button,
+    .search-wrap input[type="search"]::-webkit-search-decoration {
+      -webkit-appearance: none;
+    }
+    .search-clear {
+      min-width: 32px;
+      min-height: 32px;
+      padding: 0 8px;
+    }
+    .filter-chips {
+      display: flex;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+    .chip-filter {
+      min-height: 32px;
+      padding: 4px 12px;
+      border-radius: 16px;
+      border: 1px solid var(--stroke);
+      background: transparent;
+      color: var(--text);
+      font: inherit;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    .chip-filter.on {
+      background: var(--selected);
+      border-color: transparent;
+      font-weight: 600;
+    }
+    .empty-search { margin: 0 0 20px; }
+    .empty-search h3 { margin: 0 0 4px; font-size: 16px; }
+    .reset-banner .actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
+    .toolbar { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 16px; }
+    .profiles-heading {
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin: 4px 0 10px;
+    }
+    .profiles-heading.later { margin-top: 22px; }
+    .profile-grid.custom-grid { margin-bottom: 4px; }
+    .profile-grid[hidden],
+    .custom-empty[hidden] { display: none !important; }
+    .profile-card.custom {
+      border-width: 2px;
+      border-color: color-mix(in srgb, var(--accent) 55%, var(--stroke));
+      background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 10%, transparent), var(--card) 48%);
+      padding: 20px 22px;
+    }
+    .profile-card.custom:hover {
+      border-color: color-mix(in srgb, var(--accent) 78%, var(--stroke));
+      background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 16%, transparent), rgba(255,255,255,0.08) 48%);
+    }
+    [data-theme="light"] .profile-card.custom:hover {
+      background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 12%, #fff), #fff 48%);
+    }
+    .profile-icon.cus { background: color-mix(in srgb, var(--accent) 18%, transparent); color: var(--accent); }
+    .chip-badge.custom {
+      background: color-mix(in srgb, var(--accent) 18%, transparent);
+      color: var(--accent);
+      font-size: 10px;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 8px;
+    }
+    .profile-actions {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .icon-btn {
+      width: 32px;
+      height: 32px;
+      padding: 0;
+      border: 0;
+      border-radius: 8px;
+      background: transparent;
+      color: var(--text);
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+    }
+    .icon-btn:hover { background: var(--hover); }
+    .icon-btn svg { width: 14px; height: 14px; fill: currentColor; }
+    .profile-card .btn.tall { margin-top: auto; }
+    .profile-card .btn[disabled],
+    .profile-card .btn.applied {
+      opacity: 0.55;
+      cursor: default;
+      pointer-events: none;
+      background: var(--hover);
+      color: var(--muted);
+    }
+    .custom-empty {
+      max-width: 1120px;
+      padding: 26px 28px;
+      border-radius: 12px;
+      border: 1px solid var(--stroke);
+      background: var(--card);
+      margin: 0 0 8px;
+    }
+    .custom-empty h3 { margin: 10px 0 6px; font-size: 18px; font-weight: 600; }
+    .custom-empty p { margin: 0 0 14px; max-width: 520px; }
+    .profile-card.custom .chips {
+      gap: 6px;
+    }
+    .profile-card.custom .chip {
+      padding: 5px 9px;
+    }
+    .editor-list { display: flex; flex-direction: column; gap: 10px; max-height: 360px; overflow: auto; padding-right: 4px; }
+    .editor-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px 12px;
+      padding: 12px;
+      border: 1px solid var(--stroke);
+      border-radius: 10px;
+      background: var(--card);
+    }
+    .editor-row label { font-size: 13px; color: var(--muted); display: flex; align-items: center; gap: 6px; }
+    .editor-row h4 { margin: 0; font-size: 14px; }
+    .tray-demo {
+      position: fixed;
+      right: 28px;
+      bottom: 22px;
+      z-index: 40;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 8px;
+    }
+    .tray-menu {
+      min-width: 220px;
+      padding: 6px;
+      border-radius: 8px;
+      border: 1px solid var(--stroke);
+      background: var(--card);
+      box-shadow: var(--shadow);
+    }
+    .tray-menu button {
+      width: 100%;
+      text-align: left;
+      background: transparent;
+      color: var(--text);
+      border: 0;
+      border-radius: 6px;
+      padding: 8px 10px;
+      font: inherit;
+      cursor: pointer;
+    }
+    .tray-menu button:hover { background: var(--hover); }
+    .tray-menu hr { border: 0; border-top: 1px solid var(--stroke); margin: 4px 0; }
+    .tray-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      border: 1px solid var(--stroke);
+      background: var(--card);
+      color: var(--text);
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      box-shadow: var(--shadow);
+    }
+    .tray-btn svg { width: 18px; height: 18px; fill: #16a35e; }
+    .tray-hint { font-size: 11px; color: rgba(255,255,255,.7); }
+    [data-theme="light"] .tray-hint { color: rgba(0,0,0,.55); }
+
+    dialog {
+      border: 1px solid var(--stroke);
+      border-radius: 8px;
+      background: var(--mica);
+      color: var(--text);
+      padding: 20px;
+      width: min(460px, 92vw);
+      box-shadow: var(--shadow);
+    }
+    dialog::backdrop { background: rgba(0,0,0,0.45); }
+    dialog h3 { margin-top: 0; }
+    dialog menu { display: flex; justify-content: flex-end; gap: 8px; padding: 0; margin: 16px 0 0; }
+
+    .page { display: none; }
+    .page.on { display: block; }
+
+    @media (max-width: 900px) {
+      .shell { grid-template-columns: 72px 1fr; }
+      .nav-item span { display: none; }
+      .grid3, .grid2, .hero { grid-template-columns: 1fr; }
+      nav { --nav-w: 72px; }
+      .score-wrap { flex-direction: column; align-items: flex-start; }
+      .dash-banner { flex-wrap: wrap; }
+      .dash-banner .actions { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <div class="stage">
+    <p class="hint">
+      <span><strong data-i18n="preview.hintLead">Browser preview only</strong><span data-i18n="preview.hintBody"> — looks like the WinUI 3 app. It does not control Windows.</span></span>
+      <span>
+        <button class="btn ghost" id="themeBtn" type="button" data-i18n="preview.toggleTheme">Toggle light / dark</button>
+      </span>
+    </p>
+
+    <div class="window" id="app">
+      <div class="titlebar">
+        <div class="brand">
+          <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1 2 4v4c0 4 2.5 6.7 6 8 3.5-1.3 6-4 6-8V4L8 1zm0 2.2 4.5 2.2v3.1c0 2.8-1.6 4.8-4.5 6-2.9-1.2-4.5-3.2-4.5-6V5.4L8 3.2z"/></svg>
+          <span data-i18n="app.title">PrivacyGuard</span>
+        </div>
+        <span class="badge" id="elevBadge">Standard user</span>
+        <button class="btn accent" id="adminBtn" type="button" data-i18n="shell.restartAdmin">Restart as admin</button>
+        <div class="caption" aria-hidden="true"><span>—</span><span>□</span><span>×</span></div>
+      </div>
+
+      <div class="shell">
+        <nav>
+          <div class="tiny" style="padding: 10px 12px 6px; letter-spacing: .04em; text-transform: uppercase;" data-i18n="nav.overview">Overview</div>
+          <div class="nav-item active" data-page="dashboard">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3 4 9v12h6v-7h4v7h6V9z"/></svg>
+            <span data-i18n="nav.dashboard">Dashboard</span>
+          </div>
+          <div class="nav-item" data-page="profiles">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 6h16v3H4zm0 5h16v3H4zm0 5h10v3H4z"/></svg>
+            <span data-i18n="nav.profiles">Profiles</span>
+          </div>
+          <div style="height:1px;background:var(--stroke);margin:8px 12px;"></div>
+          <div class="tiny" style="padding: 6px 12px; letter-spacing: .04em; text-transform: uppercase;" data-i18n="nav.records">Records</div>
+          <div class="nav-item" data-page="history">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 3a9 9 0 1 0 8.2 12h-2.1A7 7 0 1 1 13 5v4l5-3-5-3z"/></svg>
+            <span data-i18n="nav.history">History</span>
+          </div>
+          <div class="nav-spacer"></div>
+          <div class="nav-item" data-page="settings">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.1 12.9a7.6 7.6 0 0 0 .1-.9 7.6 7.6 0 0 0-.1-.9l2-1.6-2-3.4-2.4 1a7.4 7.4 0 0 0-1.6-.9L14.7 2h-4l-.4 2.6c-.6.2-1.1.5-1.6.9l-2.4-1-2 3.4 2 1.6a7.6 7.6 0 0 0-.1.9c0 .3 0 .6.1.9l-2 1.6 2 3.4 2.4-1c.5.4 1 .7 1.6.9l.4 2.6h4l.4-2.6c.6-.2 1.1-.5 1.6-.9l2.4 1 2-3.4-2-1.6zM12 15.5A3.5 3.5 0 1 1 12 8.5a3.5 3.5 0 0 1 0 7z"/></svg>
+            <span data-i18n="nav.settings">Settings</span>
+          </div>
+        </nav>
+
+        <main>
+          <section class="page on" id="dashboard">
+            <div class="row">
+              <div>
+                <h1 data-i18n="dashboard.title">Privacy dashboard</h1>
+                <p class="sub" data-i18n="preview.edition">Windows 11 24H2 (Professional) — sample</p>
+              </div>
+              <button class="btn" type="button" data-i18n="dashboard.refresh">Refresh</button>
+            </div>
+            <div class="dash-alerts">
+            <div class="infobar toast" id="toastBar">
+              <div><div class="t" id="toastTitle" data-i18n="dashboard.privacyUpdated">Privacy updated</div><p id="toastMsg"></p></div>
+            </div>
+            <div class="dash-banner restart" id="statusBar">
+              <div class="icon-circle">🛡</div>
+              <div class="grow">
+                <strong data-i18n="dashboard.restartBannerTitle">Restart as administrator to apply changes</strong>
+                <p class="tiny" style="margin:4px 0 0" data-i18n="dashboard.restartBannerBody">You can inspect everything now. Machine policy, DiagTrack, and Copilot/Cortana require elevation.</p>
+              </div>
+              <button class="btn accent" id="adminCta" type="button" data-i18n="dashboard.restartAdmin">Restart as administrator</button>
+            </div>
+            <div class="dash-admin" id="adminStatus">
+              <span class="ok">✓</span>
+              <strong data-i18n="dashboard.adminTitle">Administrator</strong>
+              <span class="tiny" data-i18n="preview.edition">Windows 11 24H2 (Professional) — sample</span>
+            </div>
+            <div class="dash-banner reset" id="resetBanner">
+              <div class="icon-circle">⚠</div>
+              <div class="grow">
+                <strong data-i18n="dashboard.windowsResetTitle">Windows has reset some privacy settings</strong>
+                <p class="tiny" style="margin:4px 0 0" data-i18n="dashboard.windowsResetBodySample">These settings no longer match the last PrivacyGuard apply: Advertising ID, Telemetry level.</p>
+              </div>
+              <div class="actions">
+                <button class="btn accent" type="button" id="reapplyBtn" data-confirm-key="dashboard.reapplyLastProfile" data-i18n="dashboard.reapplyLastProfile">Re-apply last profile</button>
+                <button class="btn" type="button" id="dismissResetBtn" data-i18n="common.dismiss">Dismiss</button>
+              </div>
+            </div>
+            </div>
+            <div class="search-row">
+              <div class="search-wrap">
+                <svg viewBox="0 0 24 24"><path d="M15.5 14h-.8l-.3-.3A6.5 6.5 0 1 0 14 15.5l.3.3v.8l5 5 1.5-1.5-5-5zm-6 0A4.5 4.5 0 1 1 14 9.5 4.5 4.5 0 0 1 9.5 14z"/></svg>
+                <input id="dashSearch" type="search" autocomplete="off" data-i18n-placeholder="dashboard.searchPlaceholder" placeholder="Search privacy controls" />
+                <button class="btn search-clear" type="button" id="clearSearch" hidden aria-label="Clear">✕</button>
+              </div>
+              <div class="filter-chips" role="group" aria-label="Filter privacy controls">
+                <button class="chip-filter on" type="button" data-filter="all" data-i18n="dashboard.filterAll">All</button>
+                <button class="chip-filter" type="button" data-filter="collecting" data-i18n="dashboard.filterCollecting">Collecting</button>
+                <button class="chip-filter" type="button" data-filter="protected" data-i18n="dashboard.filterProtected">Protected</button>
+              </div>
+            </div>
+            <div class="empty-search" id="noSearchResults" hidden>
+              <h3 data-i18n="dashboard.noResults">No results found</h3>
+              <p class="muted" data-i18n="dashboard.noResultsBody">Try a different name or description, or clear the search.</p>
+            </div>
+            <div class="hero">
+              <div class="card">
+                <div class="score-wrap">
+                  <div class="ring"><div class="ring-inner"><div class="score" style="color:#d35a28;font-size:40px;line-height:1">38</div><div class="tiny" style="margin-top:2px" data-i18n="dashboard.outOf100">out of 100</div></div></div>
+                  <div>
+                    <div class="tiny" data-i18n="dashboard.privacyScore">Privacy score</div>
+                    <div style="font-size:22px;font-weight:600;margin:4px 0;" data-i18n="health.collecting">Collecting data</div>
+                    <p class="muted" data-i18n="dashboard.scoreCollecting">Windows is using default collection. Apply the recommended profile for a safer baseline.</p>
+                    <details style="margin:8px 0 12px">
+                      <summary style="cursor:pointer;font-weight:600" data-i18n="dashboard.whyScore">Why this score?</summary>
+                      <p class="tiny" style="margin-top:8px" id="scoreWhy"></p>
+                    </details>
+                    <button class="btn accent" style="width:100%" type="button" data-confirm-key="dashboard.improve" data-i18n="dashboard.improve">Apply recommended profile</button>
+                  </div>
+                </div>
+              </div>
+              <div class="card telemetry-card">
+                <div class="telemetry-head">
+                  <div class="icon-circle">📡</div>
+                  <div>
+                    <strong data-i18n="dashboard.telemetryTitle">Telemetry level</strong>
+                    <div class="tiny" data-i18n="dashboard.telemetrySubtitle">AllowTelemetry policy (0–3)</div>
+                  </div>
+                </div>
+                <select id="telemetrySelect">
+                  <option value="0" data-i18n="telemetry.security">Security — Enterprise only</option>
+                  <option value="1" data-i18n="telemetry.basic">Basic — recommended</option>
+                  <option value="2" data-i18n="telemetry.enhanced">Enhanced</option>
+                  <option value="3" selected data-i18n="telemetry.full">Full — Windows default</option>
+                </select>
+                <button class="btn accent telemetry-apply" type="button" data-confirm-key="dashboard.applyTelemetry" data-i18n="dashboard.applyTelemetry">Apply telemetry level</button>
+                <p class="tiny telemetry-hint" data-i18n="dashboard.telemetryHint">Security is honored on Enterprise and Education only. Home and Pro treat it as Basic. A restore point is created first.</p>
+              </div>
+            </div>
+            <details class="how">
+              <summary data-i18n="dashboard.howTitle">How PrivacyGuard applies changes</summary>
+              <p data-i18n="dashboard.howBody">Every change is confirmed, written only through PrivacyService, backed up to SQLite, and can be reverted from History. Critical Windows services are never touched.</p>
+            </details>
+            <div id="sections"></div>
+          </section>
+
+          <section class="page" id="profiles">
+            <h1 data-i18n="profiles.title">Privacy profiles</h1>
+            <p class="sub" data-i18n="profiles.subtitle">One-click configurations. Each apply shows a confirmation, creates a restore point, and is fully reversible.</p>
+            <div class="infobar">
+              <div>
+                <div class="t" data-i18n="profiles.safety">Safety</div>
+                <p data-i18n="profiles.choose">Choose a profile. Every apply creates a restore point first.</p>
+              </div>
+            </div>
+            <div class="toolbar">
+              <button class="btn accent" type="button" id="createProfileBtn" data-i18n="profiles.createCustom">Create custom profile</button>
+              <button class="btn outline" type="button" id="exportBtn" data-i18n="common.export">Export</button>
+              <button class="btn outline" type="button" id="importBtn" data-i18n="common.import">Import</button>
+            </div>
+            <div class="profiles-heading" data-i18n="profiles.customSection">Custom profiles</div>
+            <div class="custom-empty" id="customEmpty" hidden>
+              <div class="profile-icon cus"><svg viewBox="0 0 24 24"><path d="M3 17.3V21h3.8L17.8 9.9l-3.8-3.8L3 17.3zM21.7 7c.4-.4.4-1 0-1.4l-2.3-2.3a1 1 0 0 0-1.4 0l-1.8 1.8 3.8 3.8L21.7 7z"/></svg></div>
+              <h3 data-i18n="profiles.emptyCustomTitle">No custom profiles yet</h3>
+              <p class="muted" data-i18n="profiles.emptyCustomBody">Save a personal mix of settings. Only the options you include will change when you apply it.</p>
+              <button class="btn accent" type="button" id="createFirstCustomBtn" data-i18n="profiles.createFirstCustom">Create your first custom profile</button>
+            </div>
+            <div class="profile-grid custom-grid" id="customGrid">
+              <div class="card profile-card custom" data-profile="custom-work">
+                <div class="profile-head">
+                  <div class="profile-icon cus"><svg viewBox="0 0 24 24"><path d="M3 17.3V21h3.8L17.8 9.9l-3.8-3.8L3 17.3zM21.7 7c.4-.4.4-1 0-1.4l-2.3-2.3a1 1 0 0 0-1.4 0l-1.8 1.8 3.8 3.8L21.7 7z"/></svg></div>
+                  <div class="grow">
+                    <h4 id="customProfileTitle">Work laptop</h4>
+                    <div class="impact" data-i18n-fmt="profiles.scoreUp" data-i18n-args="24">Score impact: +24</div>
+                    <div class="last-modified" id="customProfileModified" data-i18n-fmt="profiles.lastModified" data-i18n-args="Today|9:14 AM">Last modified: Today at 9:14 AM</div>
+                  </div>
+                  <div class="profile-badges">
+                    <div class="profile-actions">
+                      <span class="chip-badge custom" data-i18n="profiles.customBadge">Custom</span>
+                      <button class="icon-btn" type="button" id="editCustomBtn" title="Edit" aria-label="Edit">
+                        <svg viewBox="0 0 24 24"><path d="M3 17.3V21h3.8L17.8 9.9l-3.8-3.8L3 17.3zM21.7 7c.4-.4.4-1 0-1.4l-2.3-2.3a1 1 0 0 0-1.4 0l-1.8 1.8 3.8 3.8L21.7 7z"/></svg>
+                      </button>
+                      <button class="icon-btn" type="button" id="deleteCustomBtn" title="Delete" aria-label="Delete">
+                        <svg viewBox="0 0 24 24"><path d="M6 19a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+                      </button>
+                    </div>
+                    <span class="chip-badge on profile-active" hidden data-i18n="profiles.active">Active</span>
+                    <div class="last-applied profile-last-applied" hidden></div>
+                  </div>
+                </div>
+                <p class="muted" id="customProfileSummary" style="margin:0">Advertising ID off, telemetry Basic, feedback off, tailored experiences off.</p>
+                <div class="chips" id="customProfileChips">
+                  <span class="chip" data-i18n="setting.advertising">Advertising ID</span>
+                  <span class="chip" data-i18n="setting.telemetry">Telemetry level</span>
+                  <span class="chip" data-i18n="setting.feedback">Feedback &amp; Diagnostics prompts</span>
+                  <span class="chip" data-i18n="setting.tailored">Tailored experiences</span>
+                </div>
+                <div class="note">
+                  <svg viewBox="0 0 24 24"><path d="M12 2 1 21h22L12 2zm1 15h-2v-2h2v2zm0-4h-2V9h2v4z"/></svg>
+                  <div><div class="t" data-i18n="profiles.beforeContinue">Before you continue</div><p data-i18n="profiles.customWarning">Only the settings you included will change. A restore point is created first, and you can undo this from History.</p></div>
+                </div>
+                <button class="btn accent tall" type="button" id="customApplyBtn" data-confirm-key="preview.customWork" data-confirm-apply="1" data-profile-id="custom-work" data-profile-title="Work laptop" data-i18n="profiles.review">Review and apply</button>
+              </div>
+            </div>
+            <div class="profiles-heading later" data-i18n="profiles.builtInSection">Built-in profiles</div>
+            <div class="profile-grid">
+              <div class="card profile-card recommended" data-profile="recommended">
+                <div class="profile-head">
+                  <div class="profile-icon rec"><svg viewBox="0 0 24 24"><path d="M12 2 4 5v6c0 5.2 3.4 10 8 11 4.6-1 8-5.8 8-11V5l-8-3zm-1.2 14.2-3.5-3.5 1.4-1.4 2.1 2.1 4.5-4.5 1.4 1.4-5.9 5.9z"/></svg></div>
+                  <div class="grow">
+                    <h4 data-i18n="profile.recommended.title">Recommended Privacy</h4>
+                    <div class="impact" data-i18n-fmt="profiles.scoreUp" data-i18n-args="68">Score impact: +68</div>
+                  </div>
+                  <div class="profile-badges">
+                    <span class="chip-badge rec" data-i18n="profiles.recommendedBadge">Recommended</span>
+                    <span class="chip-badge on profile-active" hidden data-i18n="profiles.active">Active</span>
+                    <div class="last-applied profile-last-applied" hidden></div>
+                  </div>
+                </div>
+                <p class="muted" style="margin:0" data-i18n="profile.recommended.summary">Cuts advertising and optional diagnostics while keeping Windows Update and security healthy.</p>
+                <div class="chips">
+                  <span class="chip" data-i18n="profile.recommended.h1">Telemetry: Basic</span>
+                  <span class="chip" data-i18n="profile.recommended.h2">Advertising ID off</span>
+                  <span class="chip" data-i18n="profile.recommended.h3">Activity history off</span>
+                  <span class="chip" data-i18n="profile.recommended.h4">Feedback prompts off</span>
+                  <span class="chip" data-i18n="profile.recommended.h5">DiagTrack stays running</span>
+                </div>
+                <div class="note">
+                  <svg viewBox="0 0 24 24"><path d="M12 2 1 21h22L12 2zm1 15h-2v-2h2v2zm0-4h-2V9h2v4z"/></svg>
+                  <div><div class="t" data-i18n="profiles.beforeContinue">Before you continue</div><p data-i18n="profile.recommended.warning">Some personalized tips, ads, and timeline sync will stop. This does not affect Windows Security or Update.</p></div>
+                </div>
+                <button class="btn accent tall" type="button" data-confirm-key="profile.recommended.title" data-confirm-apply="1" data-profile-id="recommended" data-i18n="profiles.review">Review and apply</button>
+              </div>
+              <div class="card profile-card maximum" data-profile="maximum">
+                <div class="profile-head">
+                  <div class="profile-icon max"><svg viewBox="0 0 24 24"><path d="M17 9h-1V7a4 4 0 0 0-8 0v2H7a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2zM9 7a3 3 0 0 1 6 0v2H9V7zm3 9.2A1.8 1.8 0 1 1 12 12a1.8 1.8 0 0 1 0 4.2z"/></svg></div>
+                  <div class="grow">
+                    <h4 data-i18n="profile.maximum.title">Maximum Privacy</h4>
+                    <div class="impact" data-i18n-fmt="profiles.scoreUp" data-i18n-args="86">Score impact: +86</div>
+                  </div>
+                  <div class="profile-badges">
+                    <span class="chip-badge on profile-active" hidden data-i18n="profiles.active">Active</span>
+                    <div class="last-applied profile-last-applied" hidden></div>
+                  </div>
+                </div>
+                <p class="muted" style="margin:0" data-i18n="profile.maximum.summary">Most restrictive supported configuration. Some optional Windows experiences may break.</p>
+                <div class="chips">
+                  <span class="chip" data-i18n="profile.maximum.h1">Telemetry: Security or Basic</span>
+                  <span class="chip" data-i18n="profile.maximum.h2">DiagTrack stopped</span>
+                  <span class="chip" data-i18n="profile.maximum.h3">WAP Push disabled</span>
+                  <span class="chip" data-i18n="profile.maximum.h4">Ads, Timeline, Copilot off</span>
+                  <span class="chip" data-i18n="profile.maximum.h5">Feedback &amp; tailored off</span>
+                </div>
+                <div class="note max">
+                  <svg viewBox="0 0 24 24"><path d="M12 2 1 21h22L12 2zm1 15h-2v-2h2v2zm0-4h-2V9h2v4z"/></svg>
+                  <div><div class="t" data-i18n="profiles.beforeContinue">Before you continue</div><p data-i18n="profile.maximum.warning">Search highlights, timeline, and some Store personalization may stop. On Home/Pro, Windows will not honor Security (0) telemetry.</p></div>
+                </div>
+                <button class="btn" type="button" data-confirm-key="profile.maximum.title" data-confirm-apply="1" data-profile-id="maximum" data-i18n="profiles.review">Review and apply</button>
+              </div>
+              <div class="card profile-card" data-profile="balanced">
+                <div class="profile-head">
+                  <div class="profile-icon bal"><svg viewBox="0 0 24 24"><path d="M4 20h16v-2H4v2zM7 4v12h2V8h3V4H7zm5 4v8h2v-5h3V8h-5z"/></svg></div>
+                  <div class="grow">
+                    <h4 data-i18n="profile.balanced.title">Balanced</h4>
+                    <div class="impact" data-i18n-fmt="profiles.scoreUp" data-i18n-args="42">Score impact: +42</div>
+                  </div>
+                  <div class="profile-badges">
+                    <span class="chip-badge on profile-active" hidden data-i18n="profiles.active">Active</span>
+                    <div class="last-applied profile-last-applied" hidden></div>
+                  </div>
+                </div>
+                <p class="muted" style="margin:0" data-i18n="profile.balanced.summary">Keeps diagnostic services running, turns off advertising ID and activity upload.</p>
+                <div class="chips">
+                  <span class="chip" data-i18n="profile.balanced.h1">Telemetry: Full</span>
+                  <span class="chip" data-i18n="profile.balanced.h2">DiagTrack running</span>
+                  <span class="chip" data-i18n="profile.balanced.h3">Advertising ID off</span>
+                  <span class="chip" data-i18n="profile.balanced.h4">Activity upload off</span>
+                  <span class="chip" data-i18n="profile.balanced.h5">Copilot unchanged</span>
+                </div>
+                <div class="note">
+                  <svg viewBox="0 0 24 24"><path d="M12 2 1 21h22L12 2zm1 15h-2v-2h2v2zm0-4h-2V9h2v4z"/></svg>
+                  <div><div class="t" data-i18n="profiles.beforeContinue">Before you continue</div><p data-i18n="profile.balanced.warning">Windows will still send optional diagnostic data. Only advertising and activity upload are reduced.</p></div>
+                </div>
+                <button class="btn" type="button" data-confirm-key="profile.balanced.title" data-confirm-apply="1" data-profile-id="balanced" data-i18n="profiles.review">Review and apply</button>
+              </div>
+              <div class="card profile-card restore" data-profile="restore">
+                <div class="profile-head">
+                  <div class="profile-icon rst"><svg viewBox="0 0 24 24"><path d="M12 5V2L7 7l5 5V9a5 5 0 1 1-4.9 6H5.05A7 7 0 1 0 12 5z"/></svg></div>
+                  <div class="grow">
+                    <h4 data-i18n="profile.restore.title">Restore Default</h4>
+                    <div class="impact" data-i18n="profiles.scoreNone">Score impact: no change</div>
+                  </div>
+                  <div class="profile-badges">
+                    <span class="chip-badge on profile-active" hidden data-i18n="profiles.active">Active</span>
+                    <div class="last-applied profile-last-applied" hidden></div>
+                  </div>
+                </div>
+                <p class="muted" style="margin:0" data-i18n="profile.restore.summary">Removes PrivacyGuard policy values and returns services to typical Windows defaults.</p>
+                <div class="chips">
+                  <span class="chip" data-i18n="profile.restore.h1">Telemetry: Windows default</span>
+                  <span class="chip" data-i18n="profile.restore.h2">DiagTrack automatic</span>
+                  <span class="chip" data-i18n="profile.restore.h3">Advertising ID on</span>
+                  <span class="chip" data-i18n="profile.restore.h4">Activity history on</span>
+                  <span class="chip" data-i18n="profile.restore.h5">Cortana &amp; Copilot restored</span>
+                </div>
+                <div class="note rst">
+                  <svg viewBox="0 0 24 24"><path d="M12 2 1 21h22L12 2zm1 15h-2v-2h2v2zm0-4h-2V9h2v4z"/></svg>
+                  <div><div class="t" data-i18n="profiles.beforeContinue">Before you continue</div><p data-i18n="profile.restore.warning">This restores data-collection defaults. It does not roll back unrelated third-party tweaks.</p></div>
+                </div>
+                <button class="btn" type="button" data-confirm-key="profile.restore.title" data-confirm-apply="1" data-profile-id="restore" data-i18n="profiles.review">Review and apply</button>
+              </div>
+            </div>
+          </section>
+
+          <section class="page" id="history">
+            <h1 data-i18n="history.title">Change history</h1>
+            <p class="sub" data-i18n="history.subtitle">Every mutation is recorded locally. Revert a single setting or restore a full backup point.</p>
+            <div class="infobar warn">
+              <div>
+                <div class="t" data-i18n="preview.sampleData">Preview sample data</div>
+                <p data-i18n="preview.sampleBanner">Sample data for this preview. On Windows this page shows your real local history.</p>
+              </div>
+            </div>
+            <div class="infobar">
+              <div>
+                <div class="t" data-i18n="history.audit">Local audit log</div>
+                <p id="historyStatus"></p>
+              </div>
+            </div>
+            <div class="grid2">
+              <div class="card" style="padding:18px 16px;display:flex;flex-direction:column">
+                <div class="row"><h2 style="margin:0" data-i18n="history.changes">Changes</h2><button class="btn" type="button" data-i18n="common.refresh">Refresh</button></div>
+                <div class="hist-toolbar">
+                  <button class="btn hist-filter on" type="button" data-hist-filter="all" data-i18n="history.filterAll">All</button>
+                  <button class="btn hist-filter" type="button" data-hist-filter="active" data-i18n="history.filterActive">Active</button>
+                  <button class="btn hist-filter" type="button" data-hist-filter="reverted" data-i18n="history.filterReverted">Reverted</button>
+                </div>
+                <div class="hist-day" data-i18n="history.today">Today</div>
+                <div class="hist-row sel" data-filter="active">
+                  <div class="hist-bar protect"></div>
+                  <input class="hist-check" type="checkbox" checked />
+                  <div class="icon-box" style="width:36px;height:36px;border-radius:10px">
+                    <svg viewBox="0 0 24 24"><path d="M12 3v18l-7-4H3a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1h2l7-4zm8 5a4 4 0 0 1 0 8v-2a2 2 0 0 0 0-4V8z"/></svg>
+                  </div>
+                  <div class="grow">
+                    <strong data-i18n="setting.advertising">Advertising ID</strong>
+                    <div class="tiny"><span>10:01 AM</span> · <span data-i18n="profile.recommended.title">Recommended Privacy</span></div>
+                    <div style="margin-top:6px">
+                      <span class="val-chip from" data-i18n="common.on">On</span>
+                      <span class="val-arrow">→</span>
+                      <span class="val-chip to protect" data-i18n="common.off">Off</span>
+                    </div>
+                  </div>
+                  <span class="chev">▾</span>
+                </div>
+                <div class="hist-row" data-filter="active">
+                  <div class="hist-bar protect"></div>
+                  <input class="hist-check" type="checkbox" />
+                  <div class="icon-box" style="width:36px;height:36px;border-radius:10px">
+                    <svg viewBox="0 0 24 24"><path d="M13 3a9 9 0 1 0 8.2 12h-2.1A7 7 0 1 1 13 5v4l4-2.5L13 4V3z"/></svg>
+                  </div>
+                  <div class="grow">
+                    <strong data-i18n="setting.activity">Activity History / Timeline</strong>
+                    <div class="tiny"><span>10:01 AM</span> · <span data-i18n="profile.recommended.title">Recommended Privacy</span></div>
+                    <div style="margin-top:6px">
+                      <span class="val-chip from" data-i18n="common.on">On</span>
+                      <span class="val-arrow">→</span>
+                      <span class="val-chip to protect" data-i18n="common.off">Off</span>
+                    </div>
+                  </div>
+                  <span class="chev">▾</span>
+                </div>
+                <div class="hist-row" data-filter="active">
+                  <div class="hist-bar collect"></div>
+                  <input class="hist-check" type="checkbox" />
+                  <div class="icon-box" style="width:36px;height:36px;border-radius:10px">
+                    <svg viewBox="0 0 24 24"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>
+                  </div>
+                  <div class="grow">
+                    <strong data-i18n="setting.advertising">Advertising ID</strong>
+                    <div class="tiny"><span>8:40 AM</span> · <span data-i18n="reset.historyName">Windows reset</span></div>
+                    <div style="margin-top:6px">
+                      <span class="val-chip from protect" data-i18n="common.off">Off</span>
+                      <span class="val-arrow">→</span>
+                      <span class="val-chip to" data-i18n="common.on">On</span>
+                    </div>
+                  </div>
+                  <span class="chev">▾</span>
+                </div>
+                <div class="hist-day" data-i18n="history.yesterday">Yesterday</div>
+                <div class="hist-row open" data-filter="reverted">
+                  <div class="hist-bar ok"></div>
+                  <input class="hist-check" type="checkbox" />
+                  <div class="icon-box" style="width:36px;height:36px;border-radius:10px">
+                    <svg viewBox="0 0 24 24"><path d="M4 4h16v11H7l-3 3V4zm3 5v2h10V9H7z"/></svg>
+                  </div>
+                  <div class="grow">
+                    <div class="row" style="align-items:center">
+                      <strong data-i18n="setting.feedback">Feedback &amp; Diagnostics prompts</strong>
+                      <span class="chip-badge reverted" data-i18n="history.reverted">Reverted</span>
+                    </div>
+                    <div class="tiny"><span>8:12 PM</span> · <span data-i18n="profile.maximum.title">Maximum Privacy</span></div>
+                    <div style="margin-top:6px">
+                      <span class="val-chip from" data-i18n="common.on">On</span>
+                      <span class="val-arrow">→</span>
+                      <span class="val-chip to protect" data-i18n="common.off">Off</span>
+                    </div>
+                    <div class="hist-detail">
+                      <span data-i18n="history.settingKey">Setting key: </span>Feedback<br />
+                      <span data-i18n="history.source">Source: </span><span data-i18n="profile.maximum.title">Maximum Privacy</span><br />
+                      <span id="restorePointLabel"></span>
+                    </div>
+                  </div>
+                  <span class="chev">▾</span>
+                </div>
+                <div class="row" style="margin-top:12px;align-items:center">
+                  <span class="hist-count" data-i18n="history.changeSelectedOne">1 change selected</span>
+                  <button class="btn accent tall" type="button" data-confirm-key="setting.advertising" data-confirm-revert="1" data-i18n="history.revertSelected">Revert selected</button>
+                </div>
+              </div>
+              <div class="card restore-card">
+                <h2 data-i18n="history.restorePoints">Restore points</h2>
+                <p class="tiny restore-card-sub" data-i18n="history.restorePointsSub">Snapshots taken before each mutation.</p>
+                <div class="restore-list">
+                  <div class="hist-row restore-row sel">
+                  <div class="hist-bar protect"></div>
+                  <input class="hist-check" type="checkbox" checked />
+                  <div class="snap-icon">
+                    <svg viewBox="0 0 24 24"><path d="M5 3h11l4 4v14H5V3zm2 2v14h11V8.8L14.2 5H7zm2 10h8v2H9v-2zm0-4h8v2H9v-2z"/></svg>
+                  </div>
+                  <div class="grow">
+                    <strong data-i18n="profile.recommended.title">Recommended Privacy</strong>
+                    <div class="tiny"><span data-i18n="history.today">Today</span> 10:01 AM</div>
+                    <div class="impact" data-i18n-fmt="history.settingCapturedMany" data-i18n-args="8">8 settings captured</div>
+                  </div>
+                  <span class="chev">▾</span>
+                </div>
+                <div class="hist-row restore-row">
+                  <div class="hist-bar protect"></div>
+                  <input class="hist-check" type="checkbox" />
+                  <div class="snap-icon">
+                    <svg viewBox="0 0 24 24"><path d="M5 3h11l4 4v14H5V3zm2 2v14h11V8.8L14.2 5H7zm2 10h8v2H9v-2zm0-4h8v2H9v-2z"/></svg>
+                  </div>
+                  <div class="grow">
+                    <strong id="revertFeedbackTitle"></strong>
+                    <div class="tiny"><span data-i18n="history.yesterday">Yesterday</span> 8:40 PM</div>
+                    <div class="impact" data-i18n="history.settingCapturedOne">1 setting captured</div>
+                  </div>
+                  <span class="chev">▾</span>
+                </div>
+                </div>
+                <div class="restore-actions">
+                  <div class="hist-count" data-i18n="history.restoreSelectedOne">1 restore point selected</div>
+                  <button class="btn accent tall" type="button" data-confirm-key="history.restoreButton" data-i18n="history.restoreButton">Restore selected backup</button>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="page" id="settings">
+            <h1 data-i18n="settings.title">Settings</h1>
+            <p class="sub" data-i18n="settings.subtitle">App preferences only. Windows privacy settings live on the Dashboard and Profiles pages.</p>
+            <div class="settings-section">
+              <h3 data-i18n="settings.appearance">Appearance</h3>
+              <div class="settings-card">
+                <div class="settings-icon"><svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 9 9h-9V3zm2 2.1V10h4.9A7 7 0 0 0 14 5.1z"/></svg></div>
+                <div class="meta"><h4 data-i18n="settings.theme">Theme</h4><div class="tiny" data-i18n="settings.themeDesc">Follow Windows, or force a light or dark theme.</div></div>
+                <select id="themeSelect">
+                  <option value="default" data-i18n="settings.themeDefault">Windows default</option>
+                  <option value="Light" data-i18n="settings.themeLight">Light</option>
+                  <option value="Dark" selected data-i18n="settings.themeDark">Dark</option>
+                </select>
+              </div>
+              <div class="settings-card">
+                <div class="settings-icon"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm1 2.1A8 8 0 0 1 19.8 11H13V4.1zM4.2 13A8 8 0 0 1 11 4.1V13H4.2zm6.8 6.9A8 8 0 0 1 4.2 13H11v6.9zm2 0V13h6.8A8 8 0 0 1 13 19.9z"/></svg></div>
+                <div class="meta"><h4 data-i18n="settings.language">Language</h4><div class="tiny" data-i18n="settings.languageDesc">Changes the entire PrivacyGuard interface. Dates and numbers follow this language too.</div></div>
+                <select id="languageSelect"></select>
+              </div>
+            </div>
+            <div class="settings-section">
+              <h3 data-i18n="settings.startup">Startup &amp; safety</h3>
+              <div class="settings-card">
+                <div class="settings-icon"><svg viewBox="0 0 24 24"><path d="M13 2 4 14h7l-1 8 10-14h-7l0-6z"/></svg></div>
+                <div class="meta"><h4 data-i18n="settings.startWindows">Start with Windows</h4><div class="tiny" data-i18n="settings.startWindowsDesc">Adds or removes a current-user Run key. Does not require administrator rights.</div></div>
+                <div class="switch" id="autoStart" role="switch"></div>
+              </div>
+              <div class="settings-card">
+                <div class="settings-icon">
+                  <svg viewBox="0 0 24 24"><path d="M12 2 4 5v6c0 5.2 3.4 10 8 11 4.6-1 8-5.8 8-11V5l-8-3z"/></svg>
+                  <svg class="lock" viewBox="0 0 24 24"><path d="M17 9h-1V7a4 4 0 0 0-8 0v2H7v11h10V9zM9 7a3 3 0 0 1 6 0v2H9V7z"/></svg>
+                </div>
+                <div class="meta"><h4 data-i18n="settings.confirm">Confirm before applying changes</h4><div class="tiny" data-i18n="settings.confirmDesc">Confirmation dialogs are always shown. This switch is locked on for safety.</div></div>
+                <div class="settings-lock">
+                  <svg width="12" height="12" viewBox="0 0 24 24"><path fill="currentColor" d="M17 9h-1V7a4 4 0 0 0-8 0v2H7v11h10V9zM9 7a3 3 0 0 1 6 0v2H9V7z"/></svg>
+                  <div class="switch on locked"></div>
+                </div>
+              </div>
+              <div class="settings-card">
+                <div class="settings-icon"><svg viewBox="0 0 24 24"><path d="M13 3a9 9 0 1 0 8.2 12h-2.1A7 7 0 1 1 13 5v4l4-2.5L13 4V3z"/></svg></div>
+                <div class="meta"><h4 data-i18n="settings.record">Record change history</h4><div class="tiny" data-i18n="settings.recordDesc">Write every setting mutation to the local SQLite database.</div></div>
+                <div class="switch on" id="historyToggle"></div>
+              </div>
+              <div class="settings-card">
+                <div class="settings-icon"><svg viewBox="0 0 24 24"><path d="M4 10h4v10H4zm6-8h4v18h-4zm6 5h4v13h-4z"/></svg></div>
+                <div class="meta"><h4 data-i18n="settings.enableTray">Show in the notification area</h4><div class="tiny" data-i18n="settings.enableTrayDesc">Keeps a PrivacyGuard icon in the system tray while the app is running.</div></div>
+                <div class="switch on" id="trayToggle"></div>
+              </div>
+              <div class="settings-card">
+                <div class="settings-icon"><svg viewBox="0 0 24 24"><path d="M19 13H5v-2h14v2z"/></svg></div>
+                <div class="meta"><h4 data-i18n="settings.closeToTray">Close to tray</h4><div class="tiny" data-i18n="settings.closeToTrayDesc">The close button hides the window. Use Exit on the tray menu to quit.</div></div>
+                <div class="switch on" id="closeTrayToggle"></div>
+              </div>
+              <div class="settings-card">
+                <div class="settings-icon"><svg viewBox="0 0 24 24"><path d="M12 2 1 21h22L12 2zm1 15h-2v-2h2v2zm0-4h-2V9h2v4z"/></svg></div>
+                <div class="meta"><h4 data-i18n="settings.checkResets">Watch for Windows resetting settings</h4><div class="tiny" data-i18n="settings.checkResetsDesc">On startup and every 10 minutes, compare Windows privacy settings to the last PrivacyGuard apply.</div></div>
+                <div class="switch on" id="resetToggle"></div>
+              </div>
+            </div>
+            <div class="settings-section">
+              <h3 data-i18n="settings.data">Data</h3>
+              <div class="settings-card">
+                <div class="settings-icon"><svg viewBox="0 0 24 24"><path d="M5 20h14v-2H5v2zM12 2 6 8h4v6h4V8h4L12 2z"/></svg></div>
+                <div class="meta"><h4 data-i18n="settings.exportImport">Export &amp; import</h4><div class="tiny" data-i18n="settings.exportDesc">Back up custom profiles, and optionally history, to a .pgprofile or .json file.</div></div>
+                <div style="display:flex;gap:8px">
+                  <button class="btn outline" type="button" id="settingsExportBtn" data-i18n="common.export">Export</button>
+                  <button class="btn outline" type="button" id="settingsImportBtn" data-i18n="common.import">Import</button>
+                </div>
+              </div>
+              <div class="settings-card">
+                <div class="settings-icon"><svg viewBox="0 0 24 24"><path d="M10 4H4v16h16V8h-8l-2-4z"/></svg></div>
+                <div class="meta"><h4 data-i18n="settings.logs">Log files</h4><div class="tiny">%LocalAppData%\PrivacyGuard\logs\</div></div>
+                <button class="btn outline" id="openLogsBtn" type="button"><svg viewBox="0 0 24 24"><path d="M10 4H4v16h16V8h-8l-2-4z"/></svg><span data-i18n="settings.openFolder">Open folder</span></button>
+              </div>
+              <div class="settings-card">
+                <div class="settings-icon"><svg viewBox="0 0 24 24"><path d="M4 6h16v3H4V6zm0 5h16v3H4v-3zm0 5h16v3H4v-3z"/></svg></div>
+                <div class="meta"><h4 data-i18n="settings.database">History database</h4><div class="tiny">%LocalAppData%\PrivacyGuard\privacyguard.db</div></div>
+              </div>
+            </div>
+            <div class="settings-section">
+              <h3 data-i18n="settings.about">About</h3>
+              <div class="settings-card about">
+                <div class="settings-icon" style="color:var(--accent)"><svg viewBox="0 0 24 24"><path d="M12 2 4 5v6c0 5.2 3.4 10 8 11 4.6-1 8-5.8 8-11V5l-8-3zm-1 14.2-3.5-3.5 1.4-1.4 2.1 2.1 4.5-4.5 1.4 1.4-5.9 5.9z"/></svg></div>
+                <div class="meta">
+                  <h4 data-i18n="app.version">PrivacyGuard 0.1.0</h4>
+                  <div class="tiny" data-i18n="settings.aboutBody">Unified Privacy &amp; Telemetry Control Dashboard for Windows 10/11. Changes are reversible and never target critical OS services.</div>
+                </div>
+                <button class="btn outline" id="checkUpdatesBtn" type="button" data-i18n="settings.checkUpdates">Check for updates</button>
+              </div>
+            </div>
+          </section>
+        </main>
+      </div>
+    </div>
+  </div>
+
+  <dialog id="dlg">
+    <h3 id="dlgTitle">Apply change?</h3>
+    <p data-i18n="preview.dialogBody">PrivacyGuard will apply a reversible change. A restore point is created automatically.</p>
+    <div class="infobar warn"><div><div class="t" data-i18n="dialog.beforeContinue">Before you continue</div><p data-i18n="preview.dialogMac">This preview cannot change your Mac. On Windows, this dialog is required before any registry or service write.</p></div></div>
+    <menu>
+      <button class="btn" id="dlgCancel" type="button" data-i18n="common.cancel">Cancel</button>
+      <button class="btn accent" id="dlgOk" type="button" data-i18n="common.apply">Apply</button>
+    </menu>
+  </dialog>
+
+  <dialog id="editorDlg">
+    <h3 id="editorTitle">Create custom profile</h3>
+    <p class="tiny" data-i18n="profiles.editorSubtitle">Include only the settings this profile should change, then choose the target state.</p>
+    <label class="tiny" style="display:block;margin:12px 0 6px" data-i18n="profiles.customName">Profile name</label>
+    <input id="editorName" type="text" value="Work laptop" maxlength="80" style="width:100%;padding:10px 12px;border-radius:8px;border:1px solid var(--stroke);background:var(--surface);color:var(--text);font:inherit" />
+    <p class="tiny" id="editorNameError" hidden style="color:#ff8a80;margin:6px 0 0"></p>
+    <div class="editor-list" id="editorList" style="margin-top:12px"></div>
+    <menu>
+      <button class="btn" id="editorCancel" type="button" data-i18n="common.cancel">Cancel</button>
+      <button class="btn accent" id="editorSave" type="button" data-i18n="common.save">Save</button>
+    </menu>
+  </dialog>
+
+  <div class="tray-demo" id="trayDemo">
+    <div class="tray-menu" id="trayMenu" hidden>
+      <button type="button" data-tray="open" data-i18n="tray.open">Open PrivacyGuard</button>
+      <hr />
+      <button type="button" data-tray="recommended" data-i18n="tray.recommended">Apply Recommended Profile</button>
+      <button type="button" data-tray="maximum" data-i18n="tray.maximum">Apply Maximum Privacy</button>
+      <button type="button" id="trayPause" data-tray="pause" data-i18n="tray.pause">Pause monitoring</button>
+      <hr />
+      <button type="button" data-tray="exit" data-i18n="tray.exit">Exit</button>
+    </div>
+    <button class="tray-btn" id="trayBtn" type="button" title="PrivacyGuard">
+      <svg viewBox="0 0 24 24"><path d="M12 2 4 5v6c0 5.2 3.4 10 8 11 4.6-1 8-5.8 8-11V5l-8-3z"/></svg>
+    </button>
+    <div class="tray-hint" data-i18n="preview.trayHint">Preview tray — right-click or click the icon</div>
+  </div>
+
+  <script src="i18n.js"></script>
+  <script>
+    const extraI18n = {
+      "common.clear": "Clear",
+      "common.edit": "Edit",
+      "common.delete": "Delete",
+      "common.save": "Save",
+      "common.export": "Export",
+      "common.import": "Import",
+      "common.dismiss": "Dismiss",
+      "common.include": "Include",
+      "dashboard.searchPlaceholder": "Search privacy controls",
+      "dashboard.filterAll": "All",
+      "dashboard.filterCollecting": "Collecting",
+      "dashboard.filterProtected": "Protected",
+      "dashboard.noResults": "No results found",
+      "dashboard.noResultsBody": "Try a different name or description, or clear the search.",
+      "dashboard.windowsResetTitle": "Windows has reset some privacy settings",
+      "dashboard.windowsResetBodySample": "These settings no longer match the last PrivacyGuard apply: Advertising ID, Telemetry level.",
+      "dashboard.reapplyLastProfile": "Re-apply last profile",
+      "profiles.createCustom": "Create custom profile",
+      "profiles.createFirstCustom": "Create your first custom profile",
+      "profiles.customSection": "Custom profiles",
+      "profiles.builtInSection": "Built-in profiles",
+      "profiles.lastModified": "Last modified: {0} at {1}",
+      "profiles.emptyCustomTitle": "No custom profiles yet",
+      "profiles.emptyCustomBody": "Save a personal mix of settings. Only the options you include will change when you apply it.",
+      "profiles.customBadge": "Custom",
+      "profiles.customSummary": "{0} included setting(s)",
+      "profiles.customWarning": "Only the settings you included will change. A restore point is created first, and you can undo this from History.",
+      "profiles.customName": "Profile name",
+      "profiles.customNamePlaceholder": "My privacy profile",
+      "profiles.editCustom": "Edit custom profile",
+      "profiles.customEmptyName": "Give the profile a name before saving.",
+      "profiles.editorSubtitle": "Include only the settings this profile should change, then choose the target state.",
+      "profiles.exportTitle": "Export",
+      "profiles.importTitle": "Import",
+      "profiles.exportSuccess": "Export saved.",
+      "profiles.importSuccess": "Imported 1 profile(s), 0 history row(s), and 0 restore point(s). Skipped 0 unknown item(s).",
+      "settings.enableTray": "Show in the notification area",
+      "settings.enableTrayDesc": "Keeps a PrivacyGuard icon in the system tray while the app is running.",
+      "settings.closeToTray": "Close to tray",
+      "settings.closeToTrayDesc": "The close button hides the window. Use Exit on the tray menu to quit.",
+      "settings.checkResets": "Watch for Windows resetting settings",
+      "settings.checkResetsDesc": "On startup and every 10 minutes, compare Windows privacy settings to the last PrivacyGuard apply.",
+      "settings.exportImport": "Export & import",
+      "settings.exportDesc": "Back up custom profiles, and optionally history, to a .pgprofile or .json file.",
+      "tray.open": "Open PrivacyGuard",
+      "tray.recommended": "Apply Recommended Profile",
+      "tray.maximum": "Apply Maximum Privacy",
+      "tray.pause": "Pause monitoring",
+      "tray.resume": "Resume monitoring",
+      "tray.exit": "Exit",
+      "reset.historyName": "Windows reset",
+      "preview.customWork": "Work laptop",
+      "preview.trayHint": "Preview tray — click the icon",
+      "preview.exported": "This preview cannot write files. On Windows, a .pgprofile picker opens.",
+      "preview.imported": "This preview cannot read files. On Windows, you choose what to import."
+    };
+    window.PRIVACYGUARD_I18N = window.PRIVACYGUARD_I18N || { "en-US": {} };
+    Object.keys(window.PRIVACYGUARD_I18N).forEach(lang => {
+      const table = window.PRIVACYGUARD_I18N[lang] || {};
+      window.PRIVACYGUARD_I18N[lang] = table;
+      Object.keys(extraI18n).forEach(key => {
+        if (!table[key]) table[key] = extraI18n[key];
+      });
+    });
+
+    const LANG_KEY = "privacyguard.language";
+    const icons = {
+      cloud: '<svg viewBox="0 0 24 24"><path d="M6.5 20A4.5 4.5 0 0 1 6 11.05 6 6 0 0 1 18 9a5 5 0 0 1 .5 10H6.5z"/></svg>',
+      mail: '<svg viewBox="0 0 24 24"><path d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 4-8 5L4 8V6l8 5 8-5z"/></svg>',
+      megaphone: '<svg viewBox="0 0 24 24"><path d="M12 3v18l-7-4H3a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1h2l7-4zm8 5a4 4 0 0 1 0 8v-2a2 2 0 0 0 0-4V8z"/></svg>',
+      history: '<svg viewBox="0 0 24 24"><path d="M13 3a9 9 0 1 0 8.2 12h-2.1A7 7 0 1 1 13 5v4l4-2.5L13 4V3z"/></svg>',
+      spark: '<svg viewBox="0 0 24 24"><path d="M12 2 9 9l-7 3 7 3 3 7 3-7 7-3-7-3-3-7z"/></svg>',
+      mic: '<svg viewBox="0 0 24 24"><path d="M12 14a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v5a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.9V21h2v-3.1A7 7 0 0 0 19 11h-2z"/></svg>',
+      chat: '<svg viewBox="0 0 24 24"><path d="M4 4h16v11H7l-3 3V4zm3 5v2h10V9H7z"/></svg>',
+      tune: '<svg viewBox="0 0 24 24"><path d="M3 6h8V4H3v2zm10 0h8V4h-8v2zM3 13h14v-2H3v2zm16 0h2v-2h-2v2zM3 20h4v-2H3v2zm6 0h12v-2H9v2z"/></svg>'
+    };
+
+    const sectionDefs = [
+      ["dashboard.section.core", "dashboard.section.coreSub", [
+        ["setting.diagTrack", "setting.diagTrack.desc", "service", true, "cloud"],
+        ["setting.dmw", "setting.dmw.desc", "service", false, "mail"]
+      ]],
+      ["dashboard.section.ads", "dashboard.section.adsSub", [
+        ["setting.advertising", "setting.advertising.desc", "toggle", true, "megaphone"],
+        ["setting.activity", "setting.activity.desc", "toggle", true, "history"],
+        ["setting.tailored", "setting.tailored.desc", "toggle", false, "tune"]
+      ]],
+      ["dashboard.section.ai", "dashboard.section.aiSub", [
+        ["setting.cortana", "setting.cortana.desc", "toggle", false, "mic"],
+        ["setting.copilot", "setting.copilot.desc", "toggle", false, "spark"]
+      ]],
+      ["dashboard.section.other", "dashboard.section.otherSub", [
+        ["setting.feedback", "setting.feedback.desc", "toggle", false, "chat"]
+      ]]
+    ];
+
+    const langs = window.PRIVACYGUARD_LANGS || [{ code: "en-US", native: "English" }];
+    let currentLang = "en-US";
+    let admin = false;
+    let activeProfileId = null;
+    let dashFilter = "all";
+    let pendingDeleteCustom = false;
+
+    function t(key, ...args) {
+      const tables = window.PRIVACYGUARD_I18N || {};
+      const en = tables["en-US"] || {};
+      const table = tables[currentLang] || en;
+      let s = table[key] ?? en[key] ?? key;
+      args.forEach((arg, i) => { s = s.replaceAll("{" + i + "}", arg); });
+      return s;
+    }
+
+    function knownLang(code) {
+      return langs.some(l => l.code === code) ? code : "en-US";
+    }
+
+    function renderSections() {
+      const rootSections = document.getElementById("sections");
+      rootSections.replaceChildren();
+      sectionDefs.forEach(([titleKey, subKey, items]) => {
+        const wrap = document.createElement("div");
+        wrap.className = "dash-section";
+        wrap.innerHTML = `<div class="section-h">${t(titleKey)}</div><p class="section-s">${t(subKey)}</p>`;
+        const grid = document.createElement("div");
+        grid.className = "cards";
+        items.forEach(([nameKey, descKey, kind, high, icon]) => {
+          const card = document.createElement("div");
+          card.className = "card setting-card";
+          card.dataset.health = "collecting";
+          const name = t(nameKey);
+          const desc = t(descKey);
+          card.dataset.title = name;
+          card.dataset.desc = desc;
+          const control = kind === "service"
+            ? `<button class="btn" type="button" data-confirm-key="${nameKey}" data-confirm-disable="1"${admin ? "" : " disabled"}>${t("dashboard.disable")}</button>`
+            : `<div class="switch on sw-mini" data-confirm-key="${nameKey}"></div>`;
+          const valueHtml = kind === "service"
+            ? `<span class="muted">${t("service.running")} · ${t("service.automatic")}</span>`
+            : `<span></span>`;
+          card.innerHTML = `
+          <div style="display:flex;gap:14px">
+            <div class="dot ${high ? "bad" : "mid"}"></div>
+            <div class="grow">
+              <div class="tile-head">
+                <div class="icon-box">${icons[icon]}</div>
+                <h4>${name}</h4>
+              </div>
+              <p class="muted">${desc}</p>
+              <div class="tile-foot">${valueHtml}${control}</div>
+              <div class="tiny" style="margin-top:10px">${t("dashboard.noLocalChanges")}</div>
+            </div>
+          </div>`;
+          grid.appendChild(card);
+        });
+        wrap.appendChild(grid);
+        rootSections.appendChild(wrap);
+      });
+      filterDashboard();
+    }
+
+    function filterDashboard() {
+      const q = (document.getElementById("dashSearch").value || "").trim().toLowerCase();
+      document.getElementById("clearSearch").hidden = !q;
+      document.querySelectorAll(".chip-filter").forEach(btn => {
+        btn.classList.toggle("on", btn.dataset.filter === dashFilter);
+      });
+      let visible = 0;
+      document.querySelectorAll(".dash-section").forEach(section => {
+        let any = false;
+        section.querySelectorAll(".setting-card").forEach(card => {
+          const hay = `${card.dataset.title || ""} ${card.dataset.desc || ""}`.toLowerCase();
+          const health = card.dataset.health || "collecting";
+          const healthOk = dashFilter === "all"
+            || (dashFilter === "collecting" && health !== "protected")
+            || (dashFilter === "protected" && health === "protected");
+          const match = healthOk && (!q || hay.includes(q));
+          card.style.display = match ? "" : "none";
+          if (match) any = true;
+        });
+        section.style.display = any ? "" : "none";
+        if (any) visible += 1;
+      });
+      document.getElementById("noSearchResults").hidden = !((q || dashFilter !== "all") && visible === 0);
+    }
+
+    function refreshChrome() {
+      const badge = document.getElementById("elevBadge");
+      badge.textContent = admin ? t("shell.administrator") : t("shell.standardUser");
+      badge.classList.toggle("admin", admin);
+      document.getElementById("adminBtn").style.display = admin ? "none" : "";
+      const bar = document.getElementById("statusBar");
+      const adminStatus = document.getElementById("adminStatus");
+      if (bar) bar.style.display = admin ? "none" : "flex";
+      if (adminStatus) adminStatus.classList.toggle("on", admin);
+      renderSections();
+    }
+
+    function setActiveProfile(id) {
+      activeProfileId = id;
+      const time = new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+      document.querySelectorAll(".profile-card[data-profile]").forEach(card => {
+        const isActive = card.dataset.profile === id;
+        card.classList.toggle("active", isActive);
+        const badge = card.querySelector(".profile-active");
+        if (badge) badge.hidden = !isActive;
+        const last = card.querySelector(".profile-last-applied");
+        if (last) {
+          last.hidden = !isActive;
+          if (isActive) last.textContent = t("profiles.lastApplied", t("profiles.today"), time);
+        }
+        const btn = card.querySelector("[data-confirm-apply]");
+        if (!btn) return;
+        btn.disabled = isActive;
+        btn.classList.toggle("muted", isActive);
+        btn.classList.toggle("applied", isActive);
+        if (card.classList.contains("recommended") || card.classList.contains("custom")) {
+          btn.classList.toggle("accent", !isActive);
+        }
+        btn.textContent = isActive ? t("profiles.currentlyApplied") : t("profiles.review");
+      });
+    }
+
+    function applyHistFilter(kind) {
+      document.querySelectorAll(".hist-row[data-filter]").forEach(row => {
+        row.style.display = (kind === "all" || row.dataset.filter === kind) ? "" : "none";
+      });
+    }
+
+    function updateHistSelection() {
+      const count = document.querySelectorAll("#history .grid2 .card:first-child .hist-check:checked").length;
+      const label = document.querySelector("#history .hist-count");
+      if (label) {
+        label.textContent = count === 1
+          ? t("history.changeSelectedOne")
+          : count === 0
+            ? t("history.noneSelected")
+            : t("history.changeSelectedMany", String(count));
+      }
+    }
+
+    let toastTimer;
+    function showToast() {
+      const toast = document.getElementById("toastBar");
+      document.getElementById("toastTitle").textContent = t("dashboard.privacyUpdated");
+      document.getElementById("toastMsg").textContent = t("preview.appliedDemo");
+      toast.classList.add("on");
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => toast.classList.remove("on"), 4000);
+    }
+
+    function applyLanguage(code, persist) {
+      currentLang = knownLang(code);
+      if (persist !== false) {
+        try { localStorage.setItem(LANG_KEY, currentLang); } catch (_) {}
+      }
+      const html = document.documentElement;
+      html.lang = currentLang === "ar" ? "ar" : currentLang;
+      html.dir = currentLang === "ar" ? "rtl" : "ltr";
+
+      document.querySelectorAll("[data-i18n]").forEach(el => {
+        el.textContent = t(el.getAttribute("data-i18n"));
+      });
+      document.querySelectorAll("[data-i18n-fmt]").forEach(el => {
+        const args = (el.getAttribute("data-i18n-args") || "").split("|");
+        el.textContent = t(el.getAttribute("data-i18n-fmt"), ...args);
+      });
+      document.querySelectorAll("[data-i18n-placeholder]").forEach(el => {
+        el.setAttribute("placeholder", t(el.getAttribute("data-i18n-placeholder")));
+      });
+
+      document.getElementById("toastMsg").textContent = t("preview.appliedDemo");
+      document.getElementById("scoreWhy").textContent =
+        `${t("factor.telemetry")} 0/20 · ${t("factor.diagTrack")} 0/12 · ${t("factor.advertising")} 0/12 · ${t("factor.activity")} 0/12 · ${t("factor.copilot")} 0/8 · ${t("factor.feedback")} 0/10`;
+      document.getElementById("historyStatus").textContent =
+        t("history.statusCounts", "3", "2") + " " + t("preview.sampleData");
+      document.getElementById("restorePointLabel").textContent = t("history.restorePointN", "11");
+      document.getElementById("revertFeedbackTitle").textContent = t("privacy.revertReason", t("setting.feedback"));
+
+      const langSelect = document.getElementById("languageSelect");
+      if (langSelect) langSelect.value = currentLang;
+
+      refreshChrome();
+      if (activeProfileId) setActiveProfile(activeProfileId);
+      updateHistSelection();
+    }
+
+    const languageSelect = document.getElementById("languageSelect");
+    langs.forEach(lang => {
+      const opt = document.createElement("option");
+      opt.value = lang.code;
+      opt.textContent = lang.native;
+      languageSelect.appendChild(opt);
+    });
+
+    let saved = "en-US";
+    try { saved = knownLang(localStorage.getItem(LANG_KEY) || "en-US"); } catch (_) {}
+    languageSelect.value = saved;
+    applyLanguage(saved, false);
+
+    languageSelect.addEventListener("change", e => {
+      applyLanguage(e.target.value, true);
+      restoreCustomProfile();
+    });
+
+    document.querySelectorAll(".nav-item").forEach(item => {
+      item.addEventListener("click", () => {
+        document.querySelectorAll(".nav-item").forEach(n => n.classList.remove("active"));
+        item.classList.add("active");
+        document.querySelectorAll(".page").forEach(p => p.classList.remove("on"));
+        document.getElementById(item.dataset.page).classList.add("on");
+      });
+    });
+
+    const dlg = document.getElementById("dlg");
+    let pendingProfileId = null;
+    let pendingApply = false;
+    document.body.addEventListener("click", e => {
+      const sw = e.target.closest(".switch:not(.locked)");
+      if (sw) {
+        sw.classList.toggle("on");
+        const settingCard = sw.closest(".setting-card");
+        if (settingCard) {
+          settingCard.dataset.health = sw.classList.contains("on") ? "collecting" : "protected";
+          filterDashboard();
+        }
+        if (sw.id === "autoStart") {
+          try { localStorage.setItem("privacyguard.autostart", sw.classList.contains("on") ? "1" : "0"); } catch (_) {}
+        }
+        if (sw.id === "historyToggle") {
+          try { localStorage.setItem("privacyguard.recordHistory", sw.classList.contains("on") ? "1" : "0"); } catch (_) {}
+        }
+        if (sw.id === "trayToggle") {
+          document.getElementById("trayDemo").hidden = !sw.classList.contains("on");
+        }
+        if (sw.id === "resetToggle") {
+          document.getElementById("resetBanner").hidden = !sw.classList.contains("on");
+        }
+      }
+      const btn = e.target.closest("[data-confirm], [data-confirm-key]");
+      if (!btn) return;
+      pendingProfileId = btn.dataset.profileId || null;
+      pendingApply = true;
+      const key = btn.dataset.confirmKey;
+      let title = btn.dataset.confirm || "";
+      if (key) {
+        if (btn.dataset.confirmApply) title = t("profiles.applyTitle", btn.dataset.profileTitle || t(key));
+        else if (btn.dataset.confirmDisable) title = `${t("dashboard.disable")} ${t(key)}?`;
+        else if (btn.dataset.confirmRevert) title = t("history.revertOne");
+        else title = t(key);
+      }
+      if (title && !/[?؟]$/.test(title)) title += "?";
+      document.getElementById("dlgTitle").textContent = title;
+      dlg.showModal();
+    });
+    document.getElementById("dlgCancel").onclick = () => {
+      pendingProfileId = null;
+      pendingApply = false;
+      pendingDeleteCustom = false;
+      dlg.close();
+    };
+    document.getElementById("dlgOk").onclick = () => {
+      dlg.close();
+      if (pendingDeleteCustom) {
+        customState.exists = false;
+        saveCustomState();
+        setCustomProfilesVisible(false);
+        pendingDeleteCustom = false;
+        return;
+      }
+      if (pendingProfileId) setActiveProfile(pendingProfileId);
+      if (pendingApply) showToast();
+      pendingProfileId = null;
+      pendingApply = false;
+    };
+
+    try {
+      if (localStorage.getItem("privacyguard.autostart") === "1") {
+        document.getElementById("autoStart").classList.add("on");
+      }
+      if (localStorage.getItem("privacyguard.recordHistory") === "0") {
+        document.getElementById("historyToggle").classList.remove("on");
+      }
+    } catch (_) {}
+
+    document.getElementById("openLogsBtn").onclick = () => {
+      document.getElementById("dlgTitle").textContent = t("settings.openFolder");
+      pendingProfileId = null;
+      pendingApply = false;
+      dlg.showModal();
+    };
+    document.getElementById("checkUpdatesBtn").onclick = () => {
+      document.getElementById("dlgTitle").textContent = t("settings.upToDate");
+      pendingProfileId = null;
+      pendingApply = false;
+      dlg.showModal();
+    };
+
+    const elevate = () => {
+      admin = !admin;
+      refreshChrome();
+    };
+    document.getElementById("adminBtn").onclick = elevate;
+    document.getElementById("adminCta").onclick = elevate;
+
+    const root = document.documentElement;
+    document.getElementById("themeBtn").onclick = () => {
+      const light = root.dataset.theme === "light";
+      if (light) delete root.dataset.theme;
+      else root.dataset.theme = "light";
+      document.getElementById("themeSelect").value = light ? "Dark" : "Light";
+    };
+    document.getElementById("themeSelect").onchange = (e) => {
+      if (e.target.value === "Light") root.dataset.theme = "light";
+      else delete root.dataset.theme;
+    };
+
+    document.querySelectorAll(".hist-filter").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".hist-filter").forEach(b => b.classList.remove("on"));
+        btn.classList.add("on");
+        applyHistFilter(btn.dataset.histFilter || "all");
+      });
+    });
+    document.querySelectorAll(".hist-row").forEach(row => {
+      row.addEventListener("click", e => {
+        if (e.target.closest("input, button")) return;
+        row.classList.toggle("open");
+      });
+    });
+    document.querySelectorAll(".hist-check").forEach(box => {
+      box.addEventListener("change", updateHistSelection);
+    });
+    updateHistSelection();
+
+    document.getElementById("dashSearch").addEventListener("input", filterDashboard);
+    document.getElementById("clearSearch").addEventListener("click", () => {
+      document.getElementById("dashSearch").value = "";
+      filterDashboard();
+    });
+    document.querySelectorAll(".chip-filter").forEach(btn => {
+      btn.addEventListener("click", () => {
+        dashFilter = btn.dataset.filter || "all";
+        filterDashboard();
+      });
+    });
+    document.getElementById("dismissResetBtn").addEventListener("click", () => {
+      document.getElementById("resetBanner").hidden = true;
+    });
+    document.getElementById("reapplyBtn").addEventListener("click", () => {
+      document.getElementById("resetBanner").hidden = true;
+    });
+
+    const editorDlg = document.getElementById("editorDlg");
+    const editorName = document.getElementById("editorName");
+    const editorNameError = document.getElementById("editorNameError");
+    const CUSTOM_KEY = "privacyguard.customProfile";
+    const CUSTOM_SETTING_DEFS = [
+      ["setting.telemetry", true],
+      ["setting.diagTrack", false],
+      ["setting.advertising", true],
+      ["setting.activity", false],
+      ["setting.cortana", false],
+      ["setting.copilot", false],
+      ["setting.feedback", true],
+      ["setting.tailored", true]
+    ];
+    let editorIsEdit = false;
+    let customState = loadCustomState();
+
+    function defaultCustomState() {
+      return {
+        exists: true,
+        name: "Work laptop",
+        included: ["setting.telemetry", "setting.advertising", "setting.feedback", "setting.tailored"],
+        updatedAt: null
+      };
+    }
+
+    function loadCustomState() {
+      try {
+        const raw = localStorage.getItem(CUSTOM_KEY);
+        if (!raw) return defaultCustomState();
+        const parsed = JSON.parse(raw);
+        return { ...defaultCustomState(), ...parsed, included: parsed.included || defaultCustomState().included };
+      } catch (_) {
+        return defaultCustomState();
+      }
+    }
+
+    function saveCustomState() {
+      try { localStorage.setItem(CUSTOM_KEY, JSON.stringify(customState)); } catch (_) {}
+    }
+
+    function formatCustomModified(timestamp) {
+      if (!timestamp) return t("profiles.lastModified", t("profiles.today"), "9:14 AM");
+      const local = new Date(timestamp);
+      const today = new Date();
+      const sameDay = local.toDateString() === today.toDateString();
+      const yesterday = new Date(today);
+      yesterday.setDate(today.getDate() - 1);
+      const day = sameDay
+        ? t("profiles.today")
+        : local.toDateString() === yesterday.toDateString()
+          ? t("profiles.yesterday")
+          : local.toLocaleDateString(undefined, { month: "short", day: "numeric" });
+      const time = local.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+      return t("profiles.lastModified", day, time);
+    }
+
+    function currentCustomTitle() {
+      return (customState.name || document.getElementById("customProfileTitle")?.textContent || "Work laptop").trim();
+    }
+
+    function openEditor(isEdit) {
+      editorIsEdit = !!isEdit;
+      editorNameError.hidden = true;
+      document.getElementById("editorTitle").textContent = t(editorIsEdit ? "profiles.editCustom" : "profiles.createCustom");
+      editorName.value = editorIsEdit ? currentCustomTitle() : t("profiles.customNamePlaceholder");
+      const included = new Set(editorIsEdit ? customState.included : CUSTOM_SETTING_DEFS.filter(([, on]) => on).map(([key]) => key));
+      const list = document.getElementById("editorList");
+      list.replaceChildren();
+      CUSTOM_SETTING_DEFS.forEach(([key]) => {
+        const row = document.createElement("div");
+        row.className = "editor-row";
+        const on = included.has(key);
+        row.innerHTML = `<div><h4>${t(key)}</h4><p class="tiny">${t(key + ".desc")}</p></div><label><input type="checkbox" data-key="${key}"${on ? " checked" : ""} /> ${t("common.include")}</label>`;
+        list.appendChild(row);
+      });
+      editorDlg.showModal();
+      requestAnimationFrame(() => {
+        editorName.focus();
+        editorName.select();
+      });
+    }
+
+    function applyCustomProfileEdits(name) {
+      const included = [...document.querySelectorAll("#editorList input[type=checkbox]:checked")]
+        .map(box => box.dataset.key)
+        .filter(Boolean);
+      customState.exists = true;
+      customState.name = name;
+      customState.included = included.length ? included : customState.included;
+      customState.updatedAt = Date.now();
+      saveCustomState();
+      restoreCustomProfile();
+    }
+
+    function restoreCustomProfile() {
+      customState = loadCustomState();
+      setCustomProfilesVisible(customState.exists);
+      if (!customState.exists) return;
+      const title = document.getElementById("customProfileTitle");
+      if (title) title.textContent = customState.name;
+      const applyBtn = document.getElementById("customApplyBtn");
+      if (applyBtn) applyBtn.dataset.profileTitle = customState.name;
+      const chips = document.getElementById("customProfileChips");
+      if (chips && customState.included?.length) {
+        chips.innerHTML = customState.included.map(key => `<span class="chip">${t(key)}</span>`).join("");
+      }
+      const summary = document.getElementById("customProfileSummary");
+      if (summary && customState.included?.length) {
+        summary.textContent = t("profiles.customSummary", String(customState.included.length));
+      }
+      const modified = document.getElementById("customProfileModified");
+      if (modified) {
+        modified.textContent = formatCustomModified(customState.updatedAt);
+      }
+    }
+
+    function setCustomProfilesVisible(has) {
+      document.getElementById("customEmpty").hidden = has;
+      document.getElementById("customGrid").hidden = !has;
+    }
+
+    document.getElementById("createProfileBtn").onclick = () => openEditor(false);
+    document.getElementById("createFirstCustomBtn").onclick = () => openEditor(false);
+    document.getElementById("editCustomBtn").onclick = () => openEditor(true);
+    document.getElementById("editorCancel").onclick = () => editorDlg.close();
+    document.getElementById("editorSave").onclick = () => {
+      const name = (editorName.value || "").trim();
+      if (!name) {
+        editorNameError.hidden = false;
+        editorNameError.textContent = t("profiles.customEmptyName");
+        editorName.focus();
+        return;
+      }
+      editorNameError.hidden = true;
+      applyCustomProfileEdits(name);
+      editorDlg.close();
+      setCustomProfilesVisible(true);
+      showToast();
+    };
+    document.getElementById("deleteCustomBtn").onclick = () => {
+      document.getElementById("dlgTitle").textContent = t("common.delete") + "?";
+      pendingProfileId = null;
+      pendingApply = false;
+      pendingDeleteCustom = true;
+      dlg.showModal();
+    };
+
+    restoreCustomProfile();
+
+    function showTransfer(kind) {
+      document.getElementById("dlgTitle").textContent = t(kind === "export" ? "profiles.exportTitle" : "profiles.importTitle");
+      pendingProfileId = null;
+      pendingApply = false;
+      dlg.showModal();
+    }
+    document.getElementById("exportBtn").onclick = () => showTransfer("export");
+    document.getElementById("importBtn").onclick = () => showTransfer("import");
+    document.getElementById("settingsExportBtn").onclick = () => showTransfer("export");
+    document.getElementById("settingsImportBtn").onclick = () => showTransfer("import");
+
+    const trayMenu = document.getElementById("trayMenu");
+    const trayBtn = document.getElementById("trayBtn");
+    trayBtn.addEventListener("click", () => {
+      trayMenu.hidden = !trayMenu.hidden;
+    });
+    trayBtn.addEventListener("contextmenu", e => {
+      e.preventDefault();
+      trayMenu.hidden = false;
+    });
+    document.addEventListener("click", e => {
+      if (!e.target.closest("#trayDemo")) trayMenu.hidden = true;
+    });
+    trayMenu.addEventListener("click", e => {
+      const action = e.target.closest("button")?.dataset.tray;
+      if (!action) return;
+      trayMenu.hidden = true;
+      if (action === "open") {
+        document.querySelectorAll(".nav-item").forEach(n => n.classList.remove("active"));
+        document.querySelector('.nav-item[data-page="dashboard"]').classList.add("active");
+        document.querySelectorAll(".page").forEach(p => p.classList.remove("on"));
+        document.getElementById("dashboard").classList.add("on");
+      }
+      if (action === "recommended" || action === "maximum") {
+        const titleKey = action === "maximum" ? "profile.maximum.title" : "profile.recommended.title";
+        document.getElementById("dlgTitle").textContent = t("profiles.applyTitle", t(titleKey));
+        pendingProfileId = action;
+        pendingApply = true;
+        dlg.showModal();
+      }
+      if (action === "pause") {
+        const pauseBtn = document.getElementById("trayPause");
+        const paused = pauseBtn.dataset.paused === "1";
+        pauseBtn.dataset.paused = paused ? "0" : "1";
+        pauseBtn.textContent = t(paused ? "tray.pause" : "tray.resume");
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,37 @@
+<Application
+    x:Class="PrivacyGuard.App"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:converters="using:PrivacyGuard.Converters">
+  <Application.Resources>
+    <ResourceDictionary>
+      <ResourceDictionary.MergedDictionaries>
+        <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
+        <ResourceDictionary Source="Styles/AppStyles.xaml" />
+      </ResourceDictionary.MergedDictionaries>
+
+      <converters:HealthToBrushConverter x:Key="HealthToBrushConverter" />
+      <converters:StatusDotBrushConverter x:Key="StatusDotBrushConverter" />
+      <converters:HealthToLabelConverter x:Key="HealthToLabelConverter" />
+      <converters:InfoKindToSeverityConverter x:Key="InfoKindToSeverityConverter" />
+      <converters:InverseBoolConverter x:Key="InverseBoolConverter" />
+      <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+      <converters:BoolToVisibilityConverter x:Key="InverseBoolToVisibilityConverter" Invert="True" />
+      <converters:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
+      <converters:ScoreToBrushConverter x:Key="ScoreToBrushConverter" />
+      <converters:TelemetryLevelToLabelConverter x:Key="TelemetryLevelToLabelConverter" />
+      <converters:ProfileBorderBrushConverter x:Key="ProfileBorderBrushConverter" />
+      <converters:ProfileIconBackgroundConverter x:Key="ProfileIconBackgroundConverter" />
+      <converters:ProfileIconForegroundConverter x:Key="ProfileIconForegroundConverter" />
+      <converters:ProfileBorderThicknessConverter x:Key="ProfileBorderThicknessConverter" />
+      <converters:ProfileWarningBackgroundConverter x:Key="ProfileWarningBackgroundConverter" />
+      <converters:ProfileWarningAccentConverter x:Key="ProfileWarningAccentConverter" />
+      <converters:HistoryAccentBrushConverter x:Key="HistoryAccentBrushConverter" />
+      <converters:HistoryRowBorderBrushConverter x:Key="HistoryRowBorderBrushConverter" />
+      <converters:HistoryRowBackgroundConverter x:Key="HistoryRowBackgroundConverter" />
+      <converters:HistoryToneBrushConverter x:Key="HistoryToneBrushConverter" />
+      <converters:IncludedOpacityConverter x:Key="IncludedOpacityConverter" />
+      <converters:ServiceStateToLabelConverter x:Key="ServiceStateToLabelConverter" />
+    </ResourceDictionary>
+  </Application.Resources>
+</Application>

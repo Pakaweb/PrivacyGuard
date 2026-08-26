@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Privacy policy — PrivacyGuard</title>
+  <meta name="description" content="PrivacyGuard stores settings and history on your Windows PC. It does not upload your data to us." />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="styles.css" />
+  <meta name="color-scheme" content="dark light" />
+  <meta name="theme-color" content="#0b0d12" />
+  <meta property="og:title" content="Privacy policy — PrivacyGuard" />
+  <meta property="og:description" content="PrivacyGuard stores settings and history on your Windows PC. It does not upload your data to us." />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary" />
+  <script>
+    (function () {
+      try {
+        var theme = localStorage.getItem("privacyguard.siteTheme");
+        if (theme !== "light" && theme !== "dark") {
+          theme = (window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches) ? "light" : "dark";
+        }
+        if (theme === "light") document.documentElement.setAttribute("data-theme", "light");
+        var l = localStorage.getItem("privacyguard.language") || "";
+        if (!l) {
+          var n = (navigator.language || "").toLowerCase();
+          if (n === "ar" || n.indexOf("ar-") === 0) l = "ar";
+        }
+        if (l === "ar") {
+          document.documentElement.lang = "ar";
+          document.documentElement.dir = "rtl";
+        }
+      } catch (e) {}
+    })();
+  </script>
+</head>
+<body class="page-privacy" data-page="privacy">
+  <a class="skip" href="#main" data-i18n="skip.content">Skip to content</a>
+  <header class="nav">
+    <div class="wrap nav-inner">
+      <a class="brand" href="index.html">
+        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1 2 4v4c0 4 2.5 6.7 6 8 3.5-1.3 6-4 6-8V4L8 1zm0 2.2 4.5 2.2v3.1c0 2.8-1.6 4.8-4.5 6-2.9-1.2-4.5-3.2-4.5-6V5.4L8 3.2z"/></svg>
+        PrivacyGuard
+      </a>
+      <nav class="nav-links">
+        <a href="index.html#features" data-i18n="nav.features">Features</a>
+        <a href="index.html#safety" data-i18n="nav.safety">Safety</a>
+        <a href="index.html#faq" data-i18n="nav.faq">FAQ</a>
+        <a href="download.html" data-i18n="nav.download">Download</a>
+        <a class="on" href="privacy.html" data-i18n="nav.privacy">Privacy</a>
+        <button class="btn ghost" id="themeBtn" type="button" aria-label="Theme">Light</button>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main" class="wrap privacy-page">
+    <header class="privacy-head">
+      <p class="kicker"><span data-i18n="privacy.kicker">Policy</span> <span class="ver-pill" data-i18n="privacy.updated">Last updated 19 August 2026</span></p>
+      <h1 data-i18n="privacy.title">Privacy policy</h1>
+      <p class="lede privacy-lede" data-i18n="privacy.lede">PrivacyGuard is built to protect your privacy. The desktop app does not send your settings, history, or files to us. Everything it stores stays on your PC.</p>
+    </header>
+
+    <ul class="privacy-highlights">
+      <li>
+        <span class="req-icon" aria-hidden="true">
+          <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1.5 2 4v4.2c0 3.6 2.4 6.2 6 7.3 3.6-1.1 6-3.7 6-7.3V4L8 1.5zm0 2.1 4.4 1.8v3.8c0 2.4-1.5 4.3-4.4 5.4-2.9-1.1-4.4-3-4.4-5.4V5.4L8 3.6z"/></svg>
+        </span>
+        <span>
+          <strong data-i18n="privacy.h1title">No app telemetry to us</strong>
+          <span data-i18n="privacy.h1body">The desktop app does not send your privacy settings, history, or personal files to our servers.</span>
+        </span>
+      </li>
+      <li>
+        <span class="req-icon" aria-hidden="true">
+          <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a3.5 3.5 0 0 0-3.5 3.5c0 1.4.8 2.6 2 3.2V9H5v2h1.5v1.2c-.9.3-1.5 1.1-1.5 2.1h6c0-1-.6-1.8-1.5-2.1V11H11V9H9.5V7.7c1.2-.6 2-1.8 2-3.2A3.5 3.5 0 0 0 8 1z"/></svg>
+        </span>
+        <span>
+          <strong data-i18n="privacy.h2title">No account required</strong>
+          <span data-i18n="privacy.h2body">The desktop app does not create an account.</span>
+        </span>
+      </li>
+      <li>
+        <span class="req-icon" aria-hidden="true">
+          <svg viewBox="0 0 16 16" fill="currentColor"><path d="M2 3h12v10H2V3zm1.5 1.5v7h9v-7h-9zM5 6h6v1.2H5V6zm0 2.3h4V9.5H5V8.3z"/></svg>
+        </span>
+        <span>
+          <strong data-i18n="privacy.h3title">Local only</strong>
+          <span data-i18n="privacy.h3body" data-i18n-html>Change history and restore points stay under {path} on your PC.</span>
+        </span>
+      </li>
+      <li>
+        <span class="req-icon" aria-hidden="true">
+          <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1 2 4v4c0 4 2.5 6.7 6 8 3.5-1.3 6-4 6-8V4L8 1zm0 2.2 4.5 2.2v3.1c0 2.8-1.6 4.8-4.5 6-2.9-1.2-4.5-3.2-4.5-6V5.4L8 3.2z"/></svg>
+        </span>
+        <span>
+          <strong data-i18n="privacy.h4title">Nothing sent to our servers</strong>
+          <span data-i18n="privacy.h4body">We do not receive your Windows privacy settings or app history.</span>
+        </span>
+      </li>
+    </ul>
+
+    <section class="card privacy-card">
+      <h2 data-i18n="privacy.storesTitle">What the app stores</h2>
+      <p data-i18n="privacy.storesP1">PrivacyGuard is a local Windows application. It reads and, with your confirmation, writes Windows privacy-related settings on the device where you install it.</p>
+      <ul>
+        <li data-i18n="privacy.storesLi1" data-i18n-html>Change history and restore points are stored only under {path} on your PC.</li>
+        <li data-i18n="privacy.storesLi2">The desktop app does not send that data — or your personal files — to our servers.</li>
+        <li data-i18n="privacy.storesLi3">We do not keep a copy of your settings or history.</li>
+      </ul>
+    </section>
+
+    <section class="card privacy-card">
+      <h2 data-i18n="privacy.changesTitle">What the app changes</h2>
+      <p data-i18n="privacy.changesP1">Only after you confirm a dialog. Affected areas can include:</p>
+      <ul>
+        <li data-i18n="privacy.changesLi1">Telemetry policy</li>
+        <li data-i18n="privacy.changesLi2">Advertising ID</li>
+        <li data-i18n="privacy.changesLi3">Activity history</li>
+        <li data-i18n="privacy.changesLi4">Cortana / Copilot policy</li>
+        <li data-i18n="privacy.changesLi5">Feedback prompts and tailored experiences</li>
+        <li data-i18n="privacy.changesLi6">Two optional services: DiagTrack and dmwappushservice</li>
+      </ul>
+      <p data-i18n="privacy.changesP2">Critical Windows services are never modified.</p>
+    </section>
+
+    <section class="card privacy-card">
+      <h2 data-i18n="privacy.webTitle">What we collect on the website</h2>
+      <p data-i18n="privacy.webP1">This marketing website may be hosted by a provider that logs standard web requests for security and reliability, such as:</p>
+      <ul>
+        <li data-i18n="privacy.webLi1">IP address</li>
+        <li data-i18n="privacy.webLi2">Browser</li>
+        <li data-i18n="privacy.webLi3">Pages viewed</li>
+      </ul>
+      <p data-i18n="privacy.webP2">We do not use that to profile your Windows privacy settings.</p>
+    </section>
+
+    <section class="card privacy-card">
+      <h2 data-i18n="privacy.thirdTitle">Third parties</h2>
+      <p data-i18n="privacy.thirdP1">We do not sell your data. This website does not use advertising or analytics cookies. Language and theme preferences stay in your browser.</p>
+      <p data-i18n="privacy.thirdP2">The hosting provider may log standard web requests as described above. The desktop app’s history stays on your PC and is not sent to our servers.</p>
+    </section>
+
+    <section class="card privacy-card">
+      <h2 data-i18n="privacy.retainTitle">Data retention</h2>
+      <p data-i18n="privacy.retainP1" data-i18n-html>App history and restore points remain on your PC under {path}. We do not receive a copy, so we do not retain that data on our servers.</p>
+      <p data-i18n="privacy.retainP2">Website request logs, if any, are handled by the hosting provider for security and reliability — not to profile your Windows privacy settings.</p>
+    </section>
+
+    <section class="card privacy-card">
+      <h2 data-i18n="privacy.contactTitle">Contact</h2>
+      <p data-i18n="privacy.contactP">The desktop app does not collect contact details. For questions about this policy, use the support information published with the Windows installer.</p>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="wrap">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a class="footer-logo" href="index.html">
+            <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 1 2 4v4c0 4 2.5 6.7 6 8 3.5-1.3 6-4 6-8V4L8 1zm0 2.2 4.5 2.2v3.1c0 2.8-1.6 4.8-4.5 6-2.9-1.2-4.5-3.2-4.5-6V5.4L8 3.2z"/></svg>
+            PrivacyGuard
+          </a>
+          <p data-i18n="footer.blurb">Unified privacy and telemetry control for Windows 10 and 11.</p>
+        </div>
+        <div class="footer-links">
+          <strong data-i18n="footer.product">Product</strong>
+          <a href="index.html#features" data-i18n="nav.features">Features</a>
+          <a href="index.html#safety" data-i18n="nav.safety">Safety</a>
+          <a href="index.html#faq" data-i18n="nav.faq">FAQ</a>
+        </div>
+        <div class="footer-links">
+          <strong data-i18n="footer.company">Company</strong>
+          <a href="download.html" data-i18n="nav.download">Download</a>
+          <a href="privacy.html" data-i18n="nav.privacyPolicy">Privacy policy</a>
+        </div>
+      </div>
+      <div class="footer-row">
+        <span data-i18n="footer.copyright">© 2026 PrivacyGuard. Windows is a trademark of Microsoft.</span>
+        <span data-i18n="footer.tagline">v0.1.0 · Built for Windows. Not affiliated with Microsoft.</span>
+      </div>
+    </div>
+  </footer>
+  <script src="i18n.js"></script>
+  <script src="site.js"></script>
+</body>
+</html>

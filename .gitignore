@@ -1,0 +1,48 @@
+## Visual Studio / .NET
+.vs/
+bin/
+obj/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+ARM64/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+*.appx
+*.appxbundle
+*.appxupload
+*.msix
+*.msixbundle
+AppPackages/
+BundleArtifacts/
+Package.StoreAssociation.xml
+_pkginfo.txt
+*.pri
+*.nupkg
+project.lock.json
+artifacts/
+
+## OS
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+## Secrets / local
+*.pfx
+*.snk
+.env
+appsettings.*.local.json
+
+## Test / coverage
+TestResults/
+coverage*.json
+coverage*.xml
+*.coverage
+*.coveragexml

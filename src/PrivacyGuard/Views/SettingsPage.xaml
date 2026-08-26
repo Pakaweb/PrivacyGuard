@@ -1,0 +1,692 @@
+<Page
+    x:Class="PrivacyGuard.Views.SettingsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:models="using:PrivacyGuard.Models"
+    NavigationCacheMode="Disabled">
+
+  <ScrollViewer>
+    <StackPanel Padding="{StaticResource PagePadding}" MaxWidth="880" Spacing="16">
+      <StackPanel Spacing="4">
+        <TextBlock Style="{StaticResource PageTitleStyle}" Text="{x:Bind ViewModel.Loc.T(ViewModel.Loc.Stamp, 'settings.title'), Mode=OneWay}" />
+        <TextBlock
+            Style="{StaticResource PageSubtitleStyle}"
+            Text="{x:Bind ViewModel.Loc.T(ViewModel.Loc.Stamp, 'settings.subtitle'), Mode=OneWay}" />
+      </StackPanel>
+
+      <StackPanel Spacing="8">
+        <StackPanel Spacing="8">
+          <TextBlock Style="{StaticResource SettingSectionHeaderStyle}" Text="{x:Bind ViewModel.Loc.T(ViewModel.Loc.Stamp, 'settings.appearance'), Mode=OneWay}" />
+          <Rectangle Height="1" Fill="{ThemeResource CardStrokeColorDefaultBrush}" Opacity="0.7" />
+        </StackPanel>
+
+        <Border
+            Style="{StaticResource SettingRowStyle}"
+            PointerEntered="SettingRow_PointerEntered"
+            PointerExited="SettingRow_PointerExited">
+          <Grid>
+            <Rectangle
+                Width="2"
+                HorizontalAlignment="Left"
+                Fill="{ThemeResource AccentFillColorDefaultBrush}"
+                IsHitTestVisible="False"
+                Opacity="0"
+                RadiusX="1"
+                RadiusY="1" />
+            <Grid Padding="16,12" ColumnSpacing="12">
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+              </Grid.ColumnDefinitions>
+              <Border
+                  Width="40"
+                  Height="40"
+                  Background="{ThemeResource SubtleFillColorSecondaryBrush}"
+                  CornerRadius="10">
+                <FontIcon
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    FontFamily="Segoe Fluent Icons"
+                    FontSize="18"
+                    Glyph="&#xE790;" />
+              </Border>
+              <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
+                <TextBlock FontWeight="SemiBold" Text="{x:Bind ViewModel.Loc.T(ViewModel.Loc.Stamp, 'settings.theme'), Mode=OneWay}" />
+                <TextBlock
+                    FontSize="12"
+                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                    Text="{x:Bind ViewModel.Loc.T(ViewModel.Loc.Stamp, 'settings.themeDesc'), Mode=OneWay}"
+                    TextWrapping="Wrap" />
+              </StackPanel>
+              <ComboBox
+                  Grid.Column="2"
+                  DisplayMemberPath="Title"
+                  ItemsSource="{x:Bind ViewModel.Themes}"
+                  SelectedItem="{x:Bind ViewModel.SelectedTheme, Mode=TwoWay}"
+                  Style="{StaticResource SettingComboBoxStyle}">
+                <ComboBox.ItemTemplate>
+                  <DataTemplate x:DataType="models:ThemeOption">
+                    <StackPanel MinWidth="220" Padding="0,4" Spacing="1">
+                      <TextBlock FontWeight="SemiBold" Text="{x:Bind Title}" />
+                      <TextBlock
+                          FontSize="11"
+                          Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                          Text="{x:Bind Subtitle}" />
+                    </StackPanel>
+                  </DataTemplate>
+                </ComboBox.ItemTemplate>
+              </ComboBox>
+            </Grid>
+          </Grid>
+        </Border>
+
+        <Border
+            Style="{StaticResource SettingRowStyle}"
+            PointerEntered="SettingRow_PointerEntered"
+            PointerExited="SettingRow_PointerExited">
+          <Grid>
+            <Rectangle
+                Width="2"
+                HorizontalAlignment="Left"
+                Fill="{ThemeResource AccentFillColorDefaultBrush}"
+                IsHitTestVisible="False"
+                Opacity="0"
+                RadiusX="1"
+                RadiusY="1" />
+            <Grid Padding="16,12" ColumnSpacing="12">
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+              </Grid.ColumnDefinitions>
+              <Border
+                  Width="40"
+                  Height="40"
+                  Background="{ThemeResource SubtleFillColorSecondaryBrush}"
+                  CornerRadius="10">
+                <FontIcon
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    FontFamily="Segoe Fluent Icons"
+                    FontSize="18"
+                    Glyph="&#xE774;" />
+              </Border>
+              <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
+                <TextBlock FontWeight="SemiBold" Text="{x:Bind ViewModel.Loc.T(ViewModel.Loc.Stamp, 'settings.language'), Mode=OneWay}" />
+                <TextBlock
+                    FontSize="12"
+                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                    Text="{x:Bind ViewModel.Loc.T(ViewModel.Loc.Stamp, 'settings.languageDesc'), Mode=OneWay}"
+                    TextWrapping="Wrap" />
+              </StackPanel>
+              <ComboBox
+                  Grid.Column="2"
+                  DisplayMemberPath="NativeName"
+                  ItemsSource="{x:Bind ViewModel.Languages}"
+                  PlaceholderText="{x:Bind ViewModel.Loc.T(ViewModel.Loc.Stamp, 'settings.languagePlaceholder'), Mode=OneWay}"
+                  SelectedItem="{x:Bind ViewModel.SelectedLanguage, Mode=TwoWay}"
+                  Style="{StaticResource SettingComboBoxStyle}">
+                <ComboBox.ItemTemplate>
+                  <DataTemplate x:DataType="models:LanguageOption">
+                    <StackPanel MinWidth="240" Padding="0,4" Spacing="1">
+                      <TextBlock FontWeight="SemiBold" Text="{x:Bind NativeName}" />
+                      <TextBlock
+                          FontSize="11"
+                          Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                          Text="{x:Bind SecondaryLabel}" />
+                    </StackPanel>
+                  </DataTemplate>
+                </ComboBox.ItemTemplate>
+              </ComboBox>
+            </Grid>
+          </Grid>
+        </Border>
+      </StackPanel>
+
+      <StackPanel Spacing="8">
+        <StackPanel Spacing="8">
+          <TextBlock Style="{StaticResource SettingSectionHeaderStyle}" Text="{x:Bind ViewModel.Loc.T(ViewModel.Loc.Stamp, 'settings.startup'), Mode=OneWay}" />
+          <Rectangle Height="1" Fill="{ThemeResource CardStrokeColorDefaultBrush}" Opacity="0.7" />
+        </StackPanel>
+
+        <Border
+            Style="{StaticResource SettingRowStyle}"
+            PointerEntered="SettingRow_PointerEntered"
+            PointerExited="SettingRow_PointerExited">
+          <Grid>
+            <Rectangle
+                Width="2"
+                HorizontalAlignment="Left"
+                Fill="{ThemeResource AccentFillColorDefaultBrush}"
+                IsHitTestVisible="False"
+                Opacity="0"
+                RadiusX="1"
+                RadiusY="1" />
+            <Grid Padding="16,12" ColumnSpacing="12">
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+              </Grid.ColumnDefinitions>
+              <Border
+                  Width="40"
+                  Height="40"
+                  Background="{ThemeResource SubtleFillColorSecondaryBrush}"
+                  CornerRadius="10">
+                <FontIcon
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    FontFamily="Segoe Fluent Icons"
+                    FontSize="18"
+                    Glyph="&#xE7E8;" />
+              </Border>
+              <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
+                <TextBlock FontWeight="SemiBold" Text="{x:Bind ViewModel.Loc.T(ViewModel.Loc.Stamp, 'settings.startWindows'), Mode=OneWay}" />
+                <TextBlock
+                    FontSize="12"
+                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                    Text="{x:Bind ViewModel.Loc.T(ViewModel.Loc.Stamp, 'settings.startWindowsDesc'), Mode=OneWay}"
+                    TextWrapping="Wrap" />
+              </StackPanel>
+              <ToggleSwitch
+                  Grid.Column="2"
+                  VerticalAlignment="Center"
+                  FocusVisualPrimaryThickness="2"
+                  IsOn="{x:Bind ViewModel.StartWithWindows, Mode=TwoWay}"
+                  OffContent="{x:Bind ViewModel.Loc.T(ViewModel.Loc.Stamp, 'common.off'), Mode=OneWay}"
+                  OnContent="{x:Bind ViewModel.Loc.T(ViewModel.Loc.Stamp, 'common.on'), Mode=OneWay}" />
+            </Grid>
+          </Grid>
+        </Border>
+
+        <Border
+            Style="{StaticResource SettingRowStyle}"
+            PointerEntered="SettingRow_PointerEntered"
+            PointerExited="SettingRow_PointerExited">
+          <Grid>
+            <Rectangle
+                Width="2"
+                HorizontalAlignment="Left"
+                Fill="{ThemeResource AccentFillColorDefaultBrush}"
+                IsHitTestVisible="False"
+                Opacity="0"
+                RadiusX="1"
+                RadiusY="1" />
+            <Grid Padding="16,12" ColumnSpacing="12">
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+              </Grid.ColumnDefinitions>
+              <Grid Width="40" Height="40">
+                <Border Background="{ThemeResource SubtleFillColorSecondaryBrush}" CornerRadius="10">
+                  <FontIcon
+                      HorizontalAlignment="Center"
+                      VerticalAlignment="Center"
+                      FontFamily="Segoe Fluent Icons"
+                      FontSize="18"
+                      Glyph="&#xE72E;" />
+                </Border>
+                <FontIcon
+                    Margin="0,0,5,5"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Bottom"
+                    FontFamily="Segoe Fluent Icons"
+                    FontSize="9"
+                    Glyph="&#xE71B;" />
+              </Grid>
+              <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
+                <TextBlock FontWeight="SemiBold" Text="{x:Bind ViewModel.Loc.T(ViewModel.Loc.Stamp, 'settings.confirm'), Mode=OneWay}" />
+                <TextBlock
+                    FontSize="12"
+                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                    Text="{x:Bind ViewModel.Loc.T(ViewModel.Loc.Stamp, 'settings.confirmDesc'), Mode=OneWay}"
+                    TextWrapping="Wrap" />
+              </StackPanel>
+              <StackPanel
+                  Grid.Column="2"
+                  VerticalAlignment="Center"
+                  Orientation="Horizontal"
+                  Spacing="8"
+                  Opacity="0.55"
+                  ToolTipService.ToolTip="{x:Bind ViewModel.Loc.T(ViewModel.Loc.Stamp, 'settings.confirmLock'), Mode=OneWay}">
+                <FontIcon
+                    VerticalAlignment="Center"
+                    FontFamily="Segoe Fluent Icons"
+                    FontSize="12"
+                    Glyph="&#xE71B;" />
+                <ToggleSwitch
+                    VerticalAlignment="Center"
+                    FocusVisualPrimaryThickness="2"
+                    IsEnabled="False"
+                    IsOn="True"
+                    OffContent="{x:Bind ViewModel.Loc.T(ViewModel.Loc.Stamp, 'common.off'), Mode=OneWay}"
+                    OnContent="{x:Bind ViewModel.Loc.T(ViewModel.Loc.Stamp, 'common.required'), Mode=OneWay}" />
+              </StackPanel>
+            </Grid>
+          </Grid>
+        </Border>
+
+        <Border
+            Style="{StaticResource SettingRowStyle}"
+            PointerEntered="SettingRow_PointerEntered"
+            PointerExited="SettingRow_PointerExited">
+          <Grid>
+            <Rectangle
+                Width="2"
+                HorizontalAlignment="Left"
+                Fill="{ThemeResource AccentFillColorDefaultBrush}"
+                IsHitTestVisible="False"
+                Opacity="0"
+                RadiusX="1"
+                RadiusY="1" />
+            <Grid Padding="16,12" ColumnSpacing="12">
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+              </Grid.ColumnDefinitions>
+              <Border
+                  Width="40"
+                  Height="40"
+                  Background="{ThemeResource SubtleFillColorSecondaryBrush}"
+                  CornerRadius="10">
+                <FontIcon
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    FontFamily="Segoe Fluent Icons"
+                    FontSize="18"
+                    Glyph="&#xE81C;" />
+              </Border>
+              <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
+                <TextBlock FontWeight="SemiBold" Text="{x:Bind ViewModel.Loc.T(ViewModel.Loc.Stamp, 'settings.record'), Mode=OneWay}" />
+                <TextBlock
+                    FontSize="12"
+                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                    Text="{x:Bind ViewModel.Loc.T(ViewModel.Loc.Stamp, 'settings.recordDesc'), Mode=OneWay}"
+                    TextWrapping="Wrap" />
+              </StackPanel>
+              <ToggleSwitch
+                  Grid.Column="2"
+                  VerticalAlignment="Center"
+                  FocusVisualPrimaryThickness="2"
+                  IsOn="{x:Bind ViewModel.RecordHistory, Mode=TwoWay}"
+                  OffContent="{x:Bind ViewModel.Loc.T(ViewModel.Loc.Stamp, 'common.off'), Mode=OneWay}"
+                  OnContent="{x:Bind ViewModel.Loc.T(ViewModel.Loc.Stamp, 'common.on'), Mode=OneWay}" />
+            </Grid>
+          </Grid>
+        </Border>
+
+        <Border
+            Style="{StaticResource SettingRowStyle}"
+            PointerEntered="SettingRow_PointerEntered"
+            PointerExited="SettingRow_PointerExited">
+          <Grid>
+            <Rectangle
+                Width="2"
+                HorizontalAlignment="Left"
+                Fill="{ThemeResource AccentFillColorDefaultBrush}"
+                IsHitTestVisible="False"
+                Opacity="0"
+                RadiusX="1"
+                RadiusY="1" />
+            <Grid Padding="16,12" ColumnSpacing="12">
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+              </Grid.ColumnDefinitions>
+              <Border
+                  Width="40"
+                  Height="40"
+                  Background="{ThemeResource SubtleFillColorSecondaryBrush}"
+                  CornerRadius="10">
+                <FontIcon
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    FontFamily="Segoe Fluent Icons"
+                    FontSize="18"
+                    Glyph="&#xE7E7;" />
+              </Border>
+              <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
+                <TextBlock FontWeight="SemiBold" Text="{x:Bind ViewModel.Loc.T(ViewModel.Loc.Stamp, 'settings.enableTray'), Mode=OneWay}" />
+                <TextBlock
+                    FontSize="12"
+                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                    Text="{x:Bind ViewModel.Loc.T(ViewModel.Loc.Stamp, 'settings.enableTrayDesc'), Mode=OneWay}"
+                    TextWrapping="Wrap" />
+              </StackPanel>
+              <ToggleSwitch
+                  Grid.Column="2"
+                  VerticalAlignment="Center"
+                  FocusVisualPrimaryThickness="2"
+                  IsOn="{x:Bind ViewModel.EnableTray, Mode=TwoWay}"
+                  OffContent="{x:Bind ViewModel.Loc.T(ViewModel.Loc.Stamp, 'common.off'), Mode=OneWay}"
+                  OnContent="{x:Bind ViewModel.Loc.T(ViewModel.Loc.Stamp, 'common.on'), Mode=OneWay}" />
+            </Grid>
+          </Grid>
+        </Border>
+
+        <Border
+            Style="{StaticResource SettingRowStyle}"
+            PointerEntered="SettingRow_PointerEntered"
+            PointerExited="SettingRow_PointerExited">
+          <Grid>
+            <Rectangle
+                Width="2"
+                HorizontalAlignment="Left"
+                Fill="{ThemeResource AccentFillColorDefaultBrush}"
+                IsHitTestVisible="False"
+                Opacity="0"
+                RadiusX="1"
+                RadiusY="1" />
+            <Grid Padding="16,12" ColumnSpacing="12">
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+              </Grid.ColumnDefinitions>
+              <Border
+                  Width="40"
+                  Height="40"
+                  Background="{ThemeResource SubtleFillColorSecondaryBrush}"
+                  CornerRadius="10">
+                <FontIcon
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    FontFamily="Segoe Fluent Icons"
+                    FontSize="18"
+                    Glyph="&#xE73F;" />
+              </Border>
+              <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
+                <TextBlock FontWeight="SemiBold" Text="{x:Bind ViewModel.Loc.T(ViewModel.Loc.Stamp, 'settings.closeToTray'), Mode=OneWay}" />
+                <TextBlock
+                    FontSize="12"
+                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                    Text="{x:Bind ViewModel.Loc.T(ViewModel.Loc.Stamp, 'settings.closeToTrayDesc'), Mode=OneWay}"
+                    TextWrapping="Wrap" />
+              </StackPanel>
+              <ToggleSwitch
+                  Grid.Column="2"
+                  VerticalAlignment="Center"
+                  FocusVisualPrimaryThickness="2"
+                  IsOn="{x:Bind ViewModel.CloseToTray, Mode=TwoWay}"
+                  OffContent="{x:Bind ViewModel.Loc.T(ViewModel.Loc.Stamp, 'common.off'), Mode=OneWay}"
+                  OnContent="{x:Bind ViewModel.Loc.T(ViewModel.Loc.Stamp, 'common.on'), Mode=OneWay}" />
+            </Grid>
+          </Grid>
+        </Border>
+
+        <Border
+            Style="{StaticResource SettingRowStyle}"
+            PointerEntered="SettingRow_PointerEntered"
+            PointerExited="SettingRow_PointerExited">
+          <Grid>
+            <Rectangle
+                Width="2"
+                HorizontalAlignment="Left"
+                Fill="{ThemeResource AccentFillColorDefaultBrush}"
+                IsHitTestVisible="False"
+                Opacity="0"
+                RadiusX="1"
+                RadiusY="1" />
+            <Grid Padding="16,12" ColumnSpacing="12">
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+              </Grid.ColumnDefinitions>
+              <Border
+                  Width="40"
+                  Height="40"
+                  Background="{ThemeResource SubtleFillColorSecondaryBrush}"
+                  CornerRadius="10">
+                <FontIcon
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    FontFamily="Segoe Fluent Icons"
+                    FontSize="18"
+                    Glyph="&#xE8EF;" />
+              </Border>
+              <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
+                <TextBlock FontWeight="SemiBold" Text="{x:Bind ViewModel.Loc.T(ViewModel.Loc.Stamp, 'settings.checkResets'), Mode=OneWay}" />
+                <TextBlock
+                    FontSize="12"
+                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                    Text="{x:Bind ViewModel.Loc.T(ViewModel.Loc.Stamp, 'settings.checkResetsDesc'), Mode=OneWay}"
+                    TextWrapping="Wrap" />
+              </StackPanel>
+              <ToggleSwitch
+                  Grid.Column="2"
+                  VerticalAlignment="Center"
+                  FocusVisualPrimaryThickness="2"
+                  IsOn="{x:Bind ViewModel.CheckForWindowsResets, Mode=TwoWay}"
+                  OffContent="{x:Bind ViewModel.Loc.T(ViewModel.Loc.Stamp, 'common.off'), Mode=OneWay}"
+                  OnContent="{x:Bind ViewModel.Loc.T(ViewModel.Loc.Stamp, 'common.on'), Mode=OneWay}" />
+            </Grid>
+          </Grid>
+        </Border>
+      </StackPanel>
+
+      <StackPanel Spacing="8">
+        <StackPanel Spacing="8">
+          <TextBlock Style="{StaticResource SettingSectionHeaderStyle}" Text="{x:Bind ViewModel.Loc.T(ViewModel.Loc.Stamp, 'settings.data'), Mode=OneWay}" />
+          <Rectangle Height="1" Fill="{ThemeResource CardStrokeColorDefaultBrush}" Opacity="0.7" />
+        </StackPanel>
+
+        <Border
+            Style="{StaticResource SettingRowStyle}"
+            PointerEntered="SettingRow_PointerEntered"
+            PointerExited="SettingRow_PointerExited">
+          <Grid>
+            <Rectangle
+                Width="2"
+                HorizontalAlignment="Left"
+                Fill="{ThemeResource AccentFillColorDefaultBrush}"
+                IsHitTestVisible="False"
+                Opacity="0"
+                RadiusX="1"
+                RadiusY="1" />
+            <Grid Padding="16,12" ColumnSpacing="12">
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+              </Grid.ColumnDefinitions>
+              <Border
+                  Width="40"
+                  Height="40"
+                  Background="{ThemeResource SubtleFillColorSecondaryBrush}"
+                  CornerRadius="10">
+                <FontIcon
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    FontFamily="Segoe Fluent Icons"
+                    FontSize="18"
+                    Glyph="&#xE8F4;" />
+              </Border>
+              <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
+                <TextBlock FontWeight="SemiBold" Text="{x:Bind ViewModel.Loc.T(ViewModel.Loc.Stamp, 'settings.exportImport'), Mode=OneWay}" />
+                <TextBlock
+                    FontSize="12"
+                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                    Text="{x:Bind ViewModel.Loc.T(ViewModel.Loc.Stamp, 'settings.exportDesc'), Mode=OneWay}"
+                    TextWrapping="Wrap" />
+              </StackPanel>
+              <StackPanel Grid.Column="2" VerticalAlignment="Center" Orientation="Horizontal" Spacing="8">
+                <Button
+                    Command="{x:Bind ViewModel.ExportCommand}"
+                    Style="{StaticResource SettingOutlinedButtonStyle}"
+                    Content="{x:Bind ViewModel.Loc.T(ViewModel.Loc.Stamp, 'common.export'), Mode=OneWay}" />
+                <Button
+                    Command="{x:Bind ViewModel.ImportCommand}"
+                    Style="{StaticResource SettingOutlinedButtonStyle}"
+                    Content="{x:Bind ViewModel.Loc.T(ViewModel.Loc.Stamp, 'common.import'), Mode=OneWay}" />
+              </StackPanel>
+            </Grid>
+          </Grid>
+        </Border>
+
+        <Border
+            Style="{StaticResource SettingRowStyle}"
+            PointerEntered="SettingRow_PointerEntered"
+            PointerExited="SettingRow_PointerExited">
+          <Grid>
+            <Rectangle
+                Width="2"
+                HorizontalAlignment="Left"
+                Fill="{ThemeResource AccentFillColorDefaultBrush}"
+                IsHitTestVisible="False"
+                Opacity="0"
+                RadiusX="1"
+                RadiusY="1" />
+            <Grid Padding="16,12" ColumnSpacing="12">
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+              </Grid.ColumnDefinitions>
+              <Border
+                  Width="40"
+                  Height="40"
+                  Background="{ThemeResource SubtleFillColorSecondaryBrush}"
+                  CornerRadius="10">
+                <FontIcon
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    FontFamily="Segoe Fluent Icons"
+                    FontSize="18"
+                    Glyph="&#xE8B7;" />
+              </Border>
+              <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
+                <TextBlock FontWeight="SemiBold" Text="{x:Bind ViewModel.Loc.T(ViewModel.Loc.Stamp, 'settings.logs'), Mode=OneWay}" />
+                <TextBlock
+                    FontSize="12"
+                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                    Text="{x:Bind ViewModel.LogsPath}"
+                    TextWrapping="Wrap" />
+              </StackPanel>
+              <Button
+                  Grid.Column="2"
+                  VerticalAlignment="Center"
+                  Command="{x:Bind ViewModel.OpenLogsFolderCommand}"
+                  Style="{StaticResource SettingOutlinedButtonStyle}">
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                  <FontIcon
+                      VerticalAlignment="Center"
+                      FontFamily="Segoe Fluent Icons"
+                      FontSize="14"
+                      Glyph="&#xE8B7;" />
+                  <TextBlock VerticalAlignment="Center" Text="{x:Bind ViewModel.Loc.T(ViewModel.Loc.Stamp, 'settings.openFolder'), Mode=OneWay}" />
+                </StackPanel>
+              </Button>
+            </Grid>
+          </Grid>
+        </Border>
+
+        <Border
+            Style="{StaticResource SettingRowStyle}"
+            PointerEntered="SettingRow_PointerEntered"
+            PointerExited="SettingRow_PointerExited">
+          <Grid>
+            <Rectangle
+                Width="2"
+                HorizontalAlignment="Left"
+                Fill="{ThemeResource AccentFillColorDefaultBrush}"
+                IsHitTestVisible="False"
+                Opacity="0"
+                RadiusX="1"
+                RadiusY="1" />
+            <Grid Padding="16,12" ColumnSpacing="12">
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+              </Grid.ColumnDefinitions>
+              <Border
+                  Width="40"
+                  Height="40"
+                  Background="{ThemeResource SubtleFillColorSecondaryBrush}"
+                  CornerRadius="10">
+                <FontIcon
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    FontFamily="Segoe Fluent Icons"
+                    FontSize="18"
+                    Glyph="&#xE9F9;" />
+              </Border>
+              <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
+                <TextBlock FontWeight="SemiBold" Text="{x:Bind ViewModel.Loc.T(ViewModel.Loc.Stamp, 'settings.database'), Mode=OneWay}" />
+                <TextBlock
+                    FontSize="12"
+                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                    Text="{x:Bind ViewModel.DatabasePath}"
+                    TextWrapping="Wrap" />
+              </StackPanel>
+            </Grid>
+          </Grid>
+        </Border>
+      </StackPanel>
+
+      <StackPanel Spacing="8">
+        <StackPanel Spacing="8">
+          <TextBlock Style="{StaticResource SettingSectionHeaderStyle}" Text="{x:Bind ViewModel.Loc.T(ViewModel.Loc.Stamp, 'settings.about'), Mode=OneWay}" />
+          <Rectangle Height="1" Fill="{ThemeResource CardStrokeColorDefaultBrush}" Opacity="0.7" />
+        </StackPanel>
+
+        <Border
+            Style="{StaticResource SettingRowStyle}"
+            PointerEntered="SettingRow_PointerEntered"
+            PointerExited="SettingRow_PointerExited">
+          <Grid>
+            <Rectangle
+                Width="2"
+                HorizontalAlignment="Left"
+                Fill="{ThemeResource AccentFillColorDefaultBrush}"
+                IsHitTestVisible="False"
+                Opacity="0"
+                RadiusX="1"
+                RadiusY="1" />
+            <Grid Padding="16,12" ColumnSpacing="12">
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+              </Grid.ColumnDefinitions>
+              <Border
+                  Width="40"
+                  Height="40"
+                  Background="{ThemeResource SubtleFillColorSecondaryBrush}"
+                  CornerRadius="10">
+                <FontIcon
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    FontFamily="Segoe Fluent Icons"
+                    FontSize="20"
+                    Foreground="{ThemeResource AccentFillColorDefaultBrush}"
+                    Glyph="&#xE72E;" />
+              </Border>
+              <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="4">
+                <TextBlock
+                    FontSize="18"
+                    FontWeight="SemiBold"
+                    Text="{x:Bind ViewModel.VersionLabel}" />
+                <TextBlock
+                    FontSize="12"
+                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                    Text="{x:Bind ViewModel.Loc.T(ViewModel.Loc.Stamp, 'settings.aboutBody'), Mode=OneWay}"
+                    TextWrapping="Wrap" />
+              </StackPanel>
+              <Button
+                  Grid.Column="2"
+                  VerticalAlignment="Center"
+                  Command="{x:Bind ViewModel.CheckForUpdatesCommand}"
+                  Style="{StaticResource SettingOutlinedButtonStyle}"
+                  Content="{x:Bind ViewModel.Loc.T(ViewModel.Loc.Stamp, 'settings.checkUpdates'), Mode=OneWay}" />
+            </Grid>
+          </Grid>
+        </Border>
+      </StackPanel>
+    </StackPanel>
+  </ScrollViewer>
+</Page>

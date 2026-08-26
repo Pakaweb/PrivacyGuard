@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "PrivacyGuard (Unpackaged)": {
+      "commandName": "Project",
+      "nativeDebugging": false
+    }
+  }
+}

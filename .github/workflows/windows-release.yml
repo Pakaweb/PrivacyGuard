@@ -1,0 +1,56 @@
+name: windows-release
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Restore
+        run: dotnet restore PrivacyGuard.sln
+
+      - name: Test
+        run: dotnet test tests/PrivacyGuard.Tests/PrivacyGuard.Tests.csproj -c Release -p:Platform=x64
+
+      - name: Publish win-x64
+        run: |
+          ./scripts/publish.ps1 -SkipInstaller
+        shell: pwsh
+
+      - name: Install Inno Setup
+        run: choco install innosetup -y --no-progress
+
+      - name: Build installer
+        run: |
+          & "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe" setup\PrivacyGuard.iss
+        shell: pwsh
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: PrivacyGuard-0.1.0-x64
+          path: |
+            artifacts/installer/*.exe
+            artifacts/win-x64/**
+
+      - name: GitHub Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          draft: true
+          generate_release_notes: true
+          files: artifacts/installer/*.exe

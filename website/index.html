@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PrivacyGuard — Windows privacy dashboard</title>
+  <meta name="description" content="See what Windows is collecting and change telemetry, advertising, and related privacy settings from one place. Confirmed, backed up, and reversible." />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="styles.css" />
+  <meta name="color-scheme" content="dark light" />
+  <meta name="theme-color" content="#0b0d12" />
+  <meta property="og:title" content="PrivacyGuard — Windows privacy dashboard" />
+  <meta property="og:description" content="See what Windows is collecting and change telemetry, advertising, and related privacy settings from one place. Confirmed, backed up, and reversible." />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary" />
+  <script>
+    (function () {
+      try {
+        var theme = localStorage.getItem("privacyguard.siteTheme");
+        if (theme !== "light" && theme !== "dark") {
+          theme = (window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches) ? "light" : "dark";
+        }
+        if (theme === "light") document.documentElement.setAttribute("data-theme", "light");
+        var l = localStorage.getItem("privacyguard.language") || "";
+        if (!l) {
+          var n = (navigator.language || "").toLowerCase();
+          if (n === "ar" || n.indexOf("ar-") === 0) l = "ar";
+        }
+        if (l === "ar") {
+          document.documentElement.lang = "ar";
+          document.documentElement.dir = "rtl";
+        }
+      } catch (e) {}
+    })();
+  </script>
+</head>
+<body data-page="home">
+  <a class="skip" href="#main" data-i18n="skip.content">Skip to content</a>
+  <header class="nav">
+    <div class="wrap nav-inner">
+      <a class="brand" href="index.html">
+        <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 1 2 4v4c0 4 2.5 6.7 6 8 3.5-1.3 6-4 6-8V4L8 1zm0 2.2 4.5 2.2v3.1c0 2.8-1.6 4.8-4.5 6-2.9-1.2-4.5-3.2-4.5-6V5.4L8 3.2z"/></svg>
+        PrivacyGuard
+      </a>
+      <nav class="nav-links">
+        <a href="#features" data-i18n="nav.features">Features</a>
+        <a href="#safety" data-i18n="nav.safety">Safety</a>
+        <a href="#faq" data-i18n="nav.faq">FAQ</a>
+        <a href="download.html" data-i18n="nav.download">Download</a>
+        <a href="privacy.html" data-i18n="nav.privacy">Privacy</a>
+        <button class="btn ghost" id="themeBtn" type="button" aria-label="Theme">Light</button>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main" class="wrap">
+    <section class="hero">
+      <div>
+        <p class="kicker"><span data-i18n="hero.kicker">Windows 10 and 11</span> <span class="ver-pill">v0.1.0</span></p>
+        <h1 data-i18n="hero.title">See what Windows collects. Change it from one dashboard.</h1>
+        <p class="lede" data-i18n="hero.lede">PrivacyGuard is a desktop dashboard for telemetry, advertising ID, activity history, Copilot, Cortana, and related settings. Every change is confirmed, backed up, and reversible.</p>
+        <div class="cta-row">
+          <a class="btn accent lg" href="download.html" data-i18n="hero.download">Download for Windows</a>
+          <a class="btn ghost" href="#safety" data-i18n="hero.safety">How safety works</a>
+        </div>
+        <p class="os-badge" data-i18n="hero.os">Windows 10 (1809+) &amp; Windows 11</p>
+        <ul class="trust">
+          <li data-i18n="trust.local">100% local</li>
+          <li data-i18n="trust.reversible">Changes are reversible</li>
+          <li data-i18n="trust.services">No critical services touched</li>
+        </ul>
+        <p class="fine" data-i18n="hero.fine">Not on Google Play. This is a Windows app. Install it from this site (or later the Microsoft Store), not from an Android store.</p>
+      </div>
+      <div class="hero-frame" aria-hidden="true">
+        <div class="hero-card">
+          <div class="fake-titlebar">
+            <span class="fake-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1 2 4v4c0 4 2.5 6.7 6 8 3.5-1.3 6-4 6-8V4L8 1z"/></svg>
+            PrivacyGuard
+          </div>
+          <div class="fake-body">
+            <div class="fake-nav">
+              <div class="fake-item on" data-i18n="mock.dashboard">Dashboard</div>
+              <div class="fake-item" data-i18n="mock.profiles">Profiles</div>
+              <div class="fake-item" data-i18n="mock.history">History</div>
+              <div class="fake-item" data-i18n="mock.settings">Settings</div>
+            </div>
+            <div class="fake-main">
+              <div class="score-row">
+                <div class="ring">
+                  <svg viewBox="0 0 120 120" aria-hidden="true">
+                    <defs>
+                      <linearGradient id="scoreGrad" x1="0%" y1="50%" x2="85%" y2="15%" gradientUnits="objectBoundingBox">
+                        <stop offset="0%" stop-color="#c42b1c" />
+                        <stop offset="100%" stop-color="#e8a24a" />
+                      </linearGradient>
+                    </defs>
+                    <circle class="ring-track" cx="60" cy="60" r="50" />
+                    <circle class="ring-progress" cx="60" cy="60" r="50" />
+                  </svg>
+                  <div class="ring-value">
+                    <strong>38</strong>
+                    <span data-i18n="mock.outOf">out of 100</span>
+                  </div>
+                </div>
+                <div>
+                  <div class="kicker" data-i18n="mock.score">Privacy score</div>
+                  <strong data-i18n="mock.collecting">Collecting data</strong>
+                  <p class="fine" data-i18n="mock.scoreHint">Apply the recommended profile for a safer baseline. Restore points are created first.</p>
+                </div>
+              </div>
+              <div class="mini-card">
+                <strong data-i18n="mock.telemetry">Telemetry level</strong>
+                <p class="fine" style="margin-top:4px" data-i18n="mock.telemetryHint">Full — Windows default. Apply is confirmed before anything is written.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="features">
+      <h2 data-i18n="features.title">Everything in one dashboard</h2>
+      <p class="sub" data-i18n="features.sub">Built for people who want control without hunting through Group Policy, registry paths, and Settings pages.</p>
+      <div class="grid3">
+        <article class="card">
+          <div class="icon"><svg viewBox="0 0 24 24"><path d="M12 3 4 9v12h6v-7h4v7h6V9z"/></svg></div>
+          <h3 data-i18n="features.score">Privacy score</h3>
+          <p data-i18n="features.scoreBody">A live score for telemetry, DiagTrack, advertising, activity history, Copilot, Cortana, and feedback.</p>
+        </article>
+        <article class="card">
+          <div class="icon"><svg viewBox="0 0 24 24"><path d="M12 2 4 5v6c0 5.2 3.4 10 8 11 4.6-1 8-5.8 8-11V5l-8-3z"/></svg></div>
+          <h3 data-i18n="features.profiles">One-click profiles</h3>
+          <p data-i18n="features.profilesBody">Recommended, Maximum, Balanced, or Restore Default. Each apply shows what will change before it writes anything.</p>
+        </article>
+        <article class="card">
+          <div class="icon"><svg viewBox="0 0 24 24"><path d="M13 3a9 9 0 1 0 8.2 12h-2.1A7 7 0 1 1 13 5v4l4-2.5L13 4V3z"/></svg></div>
+          <h3 data-i18n="features.history">Full history</h3>
+          <p data-i18n="features.historyBody">Every mutation is stored locally in SQLite. Revert one setting or restore a full backup point.</p>
+        </article>
+        <article class="card">
+          <div class="icon"><svg viewBox="0 0 24 24"><path d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4zm0 2c-3.3 0-8 1.7-8 5v1h16v-1c0-3.3-4.7-5-8-5z"/></svg></div>
+          <h3 data-i18n="features.elevation">Elevation-aware</h3>
+          <p data-i18n="features.elevationBody">Inspect as a standard user. Restart as administrator only when you need machine policy or services.</p>
+        </article>
+        <article class="card">
+          <div class="icon"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm1 2.1A8 8 0 0 1 19.8 11H13V4.1zM4.2 13A8 8 0 0 1 11 4.1V13H4.2zm6.8 6.9A8 8 0 0 1 4.2 13H11v6.9zm2 0V13h6.8A8 8 0 0 1 13 19.9z"/></svg></div>
+          <h3 data-i18n="features.langs">Light, dark, and 10 languages</h3>
+          <p data-i18n="features.langsBody">Follow Windows or force a theme. The whole interface switches language immediately and remembers your choice.</p>
+        </article>
+        <article class="card">
+          <div class="icon"><svg viewBox="0 0 24 24"><path d="M17 9h-1V7a4 4 0 0 0-8 0v2H7v11h10V9z"/></svg></div>
+          <h3 data-i18n="features.uac">No silent elevation</h3>
+          <p data-i18n="features.uacBody">The app starts as a normal process. Windows UAC is required for admin work. Critical OS services are never touched.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" id="safety">
+      <div class="safety-head">
+        <p class="kicker" data-i18n="safety.kicker">Safety model</p>
+        <h2 data-i18n="safety.title">Designed so a mistake is recoverable</h2>
+        <p class="sub" data-i18n="safety.sub">PrivacyGuard will not disable core Windows services. Changes go through one service layer, with confirmation and a backup first.</p>
+      </div>
+      <div class="grid2">
+        <div class="card steps">
+          <div class="step"><span class="num">1</span><div><h3 data-i18n="safety.confirm">Confirm</h3><p data-i18n="safety.confirmBody">A dialog lists old → new values and side effects before any write.</p></div></div>
+          <div class="step"><span class="num">2</span><div><h3 data-i18n="safety.backup">Backup</h3><p data-i18n="safety.backupBody">A restore point is saved under %LocalAppData%\PrivacyGuard\ before the change.</p></div></div>
+          <div class="step"><span class="num">3</span><div><h3 data-i18n="safety.apply">Apply</h3><p data-i18n="safety.applyBody">Only allowlisted registry keys and two optional services (DiagTrack, WAP Push) can be changed.</p></div></div>
+          <div class="step"><span class="num">4</span><div><h3 data-i18n="safety.revert">Revert</h3><p data-i18n="safety.revertBody">History can undo a single setting or replay a full restore point.</p></div></div>
+        </div>
+        <div class="card windows-only">
+          <div class="icon" aria-hidden="true">
+            <svg viewBox="0 0 16 16"><path d="M1 2.2 7.2 1.4v6.1H1V2.2zm7.8-.9L15 1v6.5H8.8V1.3zM1 8.7h6.2V14.6L1 13.8V8.7zm7.8 0H15V15l-6.2-.9V8.7z"/></svg>
+          </div>
+          <h3 data-i18n="safety.winTitle">Windows only</h3>
+          <p data-i18n="safety.winP1">PrivacyGuard is a WinUI 3 desktop app for Windows 10 (1809+) and Windows 11.</p>
+          <p data-i18n="safety.winP2">It cannot be installed from Google Play, and it does not run on Mac or Linux.</p>
+          <p class="honesty" data-i18n="safety.honesty">On Home and Pro, the telemetry “Security (0)” level is treated as Basic. The app tells you that instead of pretending it worked.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="faq">
+      <h2 data-i18n="faq.title">FAQ</h2>
+      <p class="sub" data-i18n="faq.sub">Straight answers before you install.</p>
+      <div class="faq">
+        <details open>
+          <summary data-i18n="faq.q1">Can I get this on Google Play?</summary>
+          <p data-i18n="faq.a1">No. Google Play is for Android. PrivacyGuard is a Windows desktop app. Download it from this website, or later from the Microsoft Store — never from an Android store.</p>
+        </details>
+        <details>
+          <summary data-i18n="faq.q2">Will it break Windows Update or Security?</summary>
+          <p data-i18n="faq.a2">Recommended Privacy is built to keep Update and Security healthy. Maximum Privacy is more aggressive and may hide optional experiences such as Copilot until you sign out. You can restore defaults from the app at any time.</p>
+        </details>
+        <details>
+          <summary data-i18n="faq.q3">Does it need administrator rights?</summary>
+          <p data-i18n="faq.a3">You can inspect everything as a standard user. Changing machine policy, DiagTrack, Copilot, or Cortana requires Restart as admin, which triggers Windows UAC. Nothing elevates silently.</p>
+        </details>
+        <details>
+          <summary data-i18n="faq.q4">Where is my data stored?</summary>
+          <p data-i18n="faq.a4">On your PC only. Logs and a local SQLite database live under %LocalAppData%\PrivacyGuard\. PrivacyGuard does not upload your settings or history.</p>
+        </details>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="banner">
+        <div>
+          <h2 data-i18n="cta.title">Get PrivacyGuard for Windows</h2>
+          <p class="sub" data-i18n="cta.sub">Local, reversible, and honest about SKU limits. The installer will be published here — no Google Play listing, no account required.</p>
+        </div>
+        <a class="btn accent lg cta-btn" href="download.html" data-i18n="cta.btn">Go to download</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="wrap">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a class="footer-logo" href="index.html">
+            <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 1 2 4v4c0 4 2.5 6.7 6 8 3.5-1.3 6-4 6-8V4L8 1zm0 2.2 4.5 2.2v3.1c0 2.8-1.6 4.8-4.5 6-2.9-1.2-4.5-3.2-4.5-6V5.4L8 3.2z"/></svg>
+            PrivacyGuard
+          </a>
+          <p data-i18n="footer.blurb">Unified privacy and telemetry control for Windows 10 and 11.</p>
+        </div>
+        <div class="footer-links">
+          <strong data-i18n="footer.product">Product</strong>
+          <a href="#features" data-i18n="nav.features">Features</a>
+          <a href="#safety" data-i18n="nav.safety">Safety</a>
+          <a href="#faq" data-i18n="nav.faq">FAQ</a>
+        </div>
+        <div class="footer-links">
+          <strong data-i18n="footer.company">Company</strong>
+          <a href="download.html" data-i18n="nav.download">Download</a>
+          <a href="privacy.html" data-i18n="nav.privacyPolicy">Privacy policy</a>
+        </div>
+      </div>
+      <div class="footer-row">
+        <span data-i18n="footer.copyright">© 2026 PrivacyGuard. Windows is a trademark of Microsoft.</span>
+        <span data-i18n="footer.tagline">v0.1.0 · Built for Windows. Not affiliated with Microsoft.</span>
+      </div>
+    </div>
+  </footer>
+  <script src="i18n.js"></script>
+  <script src="site.js"></script>
+</body>
+</html>
