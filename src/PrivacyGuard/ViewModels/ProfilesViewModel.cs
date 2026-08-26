@@ -521,7 +521,7 @@ public partial class ProfileOption : ObservableObject
 
     public IReadOnlyList<string> Highlights => Profile.Kind == PrivacyProfileKind.Custom
         ? Profile.Highlights
-        : Profile.Highlights.Select(LocalizationService.Current.Get).ToList();
+        : Profile.Highlights.Select(key => LocalizationService.Current.Get(key)).ToList();
 
     public string RecommendedBadgeLabel => LocalizationService.Current.Get("profiles.recommendedBadge");
 

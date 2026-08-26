@@ -25,7 +25,8 @@ public partial class CustomProfileEditorViewModel : ObservableObject
         foreach (var key in PrivacySettingKeys.All)
         {
             var live = privacy.GetCanonicalValue(key, snapshot);
-            existing?.Settings.TryGetValue(key, out var stored);
+            string? stored = null;
+            existing?.Settings.TryGetValue(key, out stored);
             var included = existing is null || stored is not null;
             var canonical = string.IsNullOrWhiteSpace(stored) ? live : stored;
 
