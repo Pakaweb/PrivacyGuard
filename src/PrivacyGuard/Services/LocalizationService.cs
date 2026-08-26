@@ -9,7 +9,7 @@ namespace PrivacyGuard.Services;
 /// <summary>
 /// In-memory UI translations plus culture/RTL application for unpackaged WinUI.
 /// </summary>
-public sealed class LocalizationService : ObservableObject, ILocalizationService
+public sealed partial class LocalizationService : ObservableObject, ILocalizationService
 {
     public static LocalizationService Current { get; private set; } = null!;
 
