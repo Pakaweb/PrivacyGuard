@@ -45,20 +45,20 @@
             Padding="10,4"
             Background="{ThemeResource SubtleFillColorSecondaryBrush}"
             CornerRadius="12"
-            Visibility="{x:Bind ViewModel.IsElevated, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
+            Visibility="{x:Bind ViewModel.StandardUserVisibility, Mode=OneWay}">
           <TextBlock FontSize="12" Text="{x:Bind ViewModel.Loc.T(ViewModel.Loc.Stamp, 'shell.standardUser'), Mode=OneWay}" />
         </Border>
         <Border
             Padding="10,4"
             Background="{ThemeResource SystemFillColorSuccessBackgroundBrush}"
             CornerRadius="12"
-            Visibility="{x:Bind ViewModel.IsElevated, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+            Visibility="{x:Bind ViewModel.ElevatedVisibility, Mode=OneWay}">
           <TextBlock FontSize="12" Text="{x:Bind ViewModel.Loc.T(ViewModel.Loc.Stamp, 'shell.administrator'), Mode=OneWay}" />
         </Border>
         <Button
             Command="{x:Bind ViewModel.RestartElevatedCommand}"
             Style="{StaticResource AccentButtonStyle}"
-            Visibility="{x:Bind ViewModel.IsElevated, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
+            Visibility="{x:Bind ViewModel.StandardUserVisibility, Mode=OneWay}">
           <StackPanel Orientation="Horizontal" Spacing="6">
             <FontIcon FontSize="14" Glyph="&#xEA18;" />
             <TextBlock Text="{x:Bind ViewModel.Loc.T(ViewModel.Loc.Stamp, 'shell.restartAdmin'), Mode=OneWay}" />

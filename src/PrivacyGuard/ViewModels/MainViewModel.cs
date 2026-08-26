@@ -1,3 +1,4 @@
+using Microsoft.UI.Xaml;
 using PrivacyGuard.Services;
 
 namespace PrivacyGuard.ViewModels;
@@ -23,6 +24,12 @@ public partial class MainViewModel : ObservableObject
     public ILocalizationService Loc { get; }
 
     public bool IsElevated { get; }
+
+    public Visibility ElevatedVisibility =>
+        IsElevated ? Visibility.Visible : Visibility.Collapsed;
+
+    public Visibility StandardUserVisibility =>
+        IsElevated ? Visibility.Collapsed : Visibility.Visible;
 
     public string ElevationLabel => IsElevated
         ? Loc.Get("shell.administrator")
