@@ -1,5 +1,6 @@
 using PrivacyGuard.Helpers;
 using PrivacyGuard.Models;
+using Xunit;
 
 namespace PrivacyGuard.Tests;
 
