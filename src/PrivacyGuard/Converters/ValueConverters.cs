@@ -440,6 +440,11 @@ public sealed class HistoryToneBrushConverter : IValueConverter
                 : new SolidColorBrush(ColorHelper.FromArgb(210, 26, 26, 26));
         }
 
+        return isBackground
+            ? new SolidColorBrush(ColorHelper.FromArgb(22, 255, 255, 255))
+            : new SolidColorBrush(ColorHelper.FromArgb(210, 232, 232, 232));
+    }
+
     public object ConvertBack(object value, Type targetType, object parameter, string language) =>
         throw new NotSupportedException();
 }
