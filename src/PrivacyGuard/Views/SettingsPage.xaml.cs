@@ -1,8 +1,6 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Hosting;
 using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Shapes;
 using PrivacyGuard.Helpers;
 using PrivacyGuard.ViewModels;
@@ -11,16 +9,37 @@ namespace PrivacyGuard.Views;
 
 public sealed partial class SettingsPage : Page
 {
-    private static readonly System.Numerics.Vector3 RestTranslation = new(0, 0, 0);
-    private static readonly System.Numerics.Vector3 HoverTranslation = new(0, -2, 16);
-
     public SettingsViewModel ViewModel { get; }
 
     public SettingsPage(SettingsViewModel viewModel)
     {
         ViewModel = viewModel;
         InitializeComponent();
-        Loaded += (_, _) => ViewModel.AllowLanguageChanges();
+        Loaded += OnLoaded;
+    }
+
+    private void OnLoaded(object sender, RoutedEventArgs e)
+    {
+        ViewModel.AllowPreferenceChanges();
+        LanguageFlyout.Items.Clear();
+        foreach (var language in ViewModel.Languages)
+        {
+            var item = new MenuFlyoutItem
+            {
+                Text = language.NativeName,
+                Tag = language
+            };
+            item.Click += LanguageItem_Click;
+            LanguageFlyout.Items.Add(item);
+        }
+    }
+
+    private void LanguageItem_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is MenuFlyoutItem { Tag: PrivacyGuard.Models.LanguageOption language })
+        {
+            ViewModel.SelectedLanguage = language;
+        }
     }
 
     private void SettingRow_PointerEntered(object sender, PointerRoutedEventArgs e)
@@ -30,9 +49,7 @@ public sealed partial class SettingsPage : Page
             return;
         }
 
-        EnsureHoverMotion(row);
-        row.Background = new SolidColorBrush(ThemePalette.Overlay(36, 14));
-        row.Translation = HoverTranslation;
+        HoverVisual.Enter(row, ThemePalette.Overlay(36, 14));
         SetAccentOpacity(row, 1);
     }
 
@@ -43,9 +60,10 @@ public sealed partial class SettingsPage : Page
             return;
         }
 
-        row.ClearValue(Border.BackgroundProperty);
-        row.Translation = RestTranslation;
-        SetAccentOpacity(row, 0);
+        if (HoverVisual.TryExit(row))
+        {
+            SetAccentOpacity(row, 0);
+        }
     }
 
     private static void SetAccentOpacity(Border row, double opacity)
@@ -54,25 +72,5 @@ public sealed partial class SettingsPage : Page
         {
             accent.Opacity = opacity;
         }
-    }
-
-    private static void EnsureHoverMotion(UIElement element)
-    {
-        ElementCompositionPreview.SetIsTranslationEnabled(element, true);
-        var visual = ElementCompositionPreview.GetElementVisual(element);
-        if (visual.ImplicitAnimations is not null)
-        {
-            return;
-        }
-
-        var compositor = visual.Compositor;
-        var translation = compositor.CreateVector3KeyFrameAnimation();
-        translation.Target = "Translation";
-        translation.InsertExpressionKeyFrame(1f, "this.FinalValue");
-        translation.Duration = TimeSpan.FromMilliseconds(180);
-
-        var animations = compositor.CreateImplicitAnimationCollection();
-        animations["Translation"] = translation;
-        visual.ImplicitAnimations = animations;
     }
 }
