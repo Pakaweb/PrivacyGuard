@@ -2,7 +2,6 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Shapes;
-using PrivacyGuard.Helpers;
 using PrivacyGuard.ViewModels;
 
 namespace PrivacyGuard.Views;
@@ -44,23 +43,15 @@ public sealed partial class SettingsPage : Page
 
     private void SettingRow_PointerEntered(object sender, PointerRoutedEventArgs e)
     {
-        if (sender is not Border row)
+        if (sender is Border row)
         {
-            return;
+            SetAccentOpacity(row, 1);
         }
-
-        HoverVisual.Enter(row, ThemePalette.Overlay(36, 14));
-        SetAccentOpacity(row, 1);
     }
 
     private void SettingRow_PointerExited(object sender, PointerRoutedEventArgs e)
     {
-        if (sender is not Border row)
-        {
-            return;
-        }
-
-        if (HoverVisual.TryExit(row))
+        if (sender is Border row)
         {
             SetAccentOpacity(row, 0);
         }
