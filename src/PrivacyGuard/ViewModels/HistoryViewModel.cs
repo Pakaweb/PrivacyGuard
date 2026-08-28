@@ -48,6 +48,9 @@ public partial class HistoryViewModel : ObservableObject
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(CanRevertNow))]
     [NotifyPropertyChangedFor(nameof(CanRestoreNow))]
+    [NotifyPropertyChangedFor(nameof(CanDeleteChanges))]
+    [NotifyPropertyChangedFor(nameof(CanDeleteRestorePoints))]
+    [NotifyPropertyChangedFor(nameof(CanClearHistory))]
     private bool _isBusy;
 
     [ObservableProperty]
@@ -58,23 +61,30 @@ public partial class HistoryViewModel : ObservableObject
     [NotifyPropertyChangedFor(nameof(ShowChangesEmpty))]
     [NotifyPropertyChangedFor(nameof(EmptyChangesTitle))]
     [NotifyPropertyChangedFor(nameof(EmptyChangesMessage))]
+    [NotifyPropertyChangedFor(nameof(CanClearHistory))]
     private bool _hasAnyChanges;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(ShowRestoreEmpty))]
+    [NotifyPropertyChangedFor(nameof(CanClearHistory))]
     private bool _hasRestorePoints;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(HasVisibleChanges))]
     [NotifyPropertyChangedFor(nameof(ShowChangesEmpty))]
+    [NotifyPropertyChangedFor(nameof(IsFilterAll))]
+    [NotifyPropertyChangedFor(nameof(IsFilterActive))]
+    [NotifyPropertyChangedFor(nameof(IsFilterReverted))]
     private int _filterIndex;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(ChangeSelectionLabel))]
     [NotifyPropertyChangedFor(nameof(RevertButtonLabel))]
+    [NotifyPropertyChangedFor(nameof(DeleteChangesLabel))]
     [NotifyPropertyChangedFor(nameof(HasSelectedChanges))]
     [NotifyPropertyChangedFor(nameof(HasSelectedRevertable))]
     [NotifyPropertyChangedFor(nameof(CanRevertNow))]
+    [NotifyPropertyChangedFor(nameof(CanDeleteChanges))]
     private int _selectedChangeCount;
 
     [ObservableProperty]
@@ -87,7 +97,14 @@ public partial class HistoryViewModel : ObservableObject
     [NotifyPropertyChangedFor(nameof(RestoreSelectionLabel))]
     [NotifyPropertyChangedFor(nameof(HasSelectedRestorePoint))]
     [NotifyPropertyChangedFor(nameof(CanRestoreNow))]
+    [NotifyPropertyChangedFor(nameof(CanDeleteRestorePoints))]
     private int _selectedRestoreCount;
+
+    public bool IsFilterAll => FilterIndex == 0;
+
+    public bool IsFilterActive => FilterIndex == 1;
+
+    public bool IsFilterReverted => FilterIndex == 2;
 
     public bool HasVisibleChanges => ChangeGroups.Count > 0;
 
@@ -105,16 +122,22 @@ public partial class HistoryViewModel : ObservableObject
 
     public bool CanRestoreNow => HasSelectedRestorePoint && !IsBusy;
 
+    public bool CanDeleteChanges => HasSelectedChanges && !IsBusy;
+
+    public bool CanDeleteRestorePoints => SelectedRestoreCount > 0 && !IsBusy;
+
+    public bool CanClearHistory => (HasAnyChanges || HasRestorePoints) && !IsBusy;
+
     public string ChangeSelectionLabel => SelectedChangeCount switch
     {
-        0 => _loc.Get("history.noneSelected"),
+        0 => _loc.Get("history.noneChangeSelected"),
         1 => _loc.Get("history.changeSelectedOne"),
         _ => _loc.Get("history.changeSelectedMany", SelectedChangeCount)
     };
 
     public string RestoreSelectionLabel => SelectedRestoreCount switch
     {
-        0 => _loc.Get("history.noneSelected"),
+        0 => _loc.Get("history.noneRestoreSelected"),
         1 => _loc.Get("history.restoreSelectedOne"),
         _ => _loc.Get("history.restoreSelectedMany", SelectedRestoreCount)
     };
@@ -123,6 +146,10 @@ public partial class HistoryViewModel : ObservableObject
         ? _loc.Get("history.revertN", SelectedRevertableCount)
         : _loc.Get("history.revertSelected");
 
+    public string DeleteChangesLabel => SelectedChangeCount > 1
+        ? _loc.Get("history.deleteN", SelectedChangeCount)
+        : _loc.Get("history.deleteSelected");
+
     public string EmptyChangesTitle => HasAnyChanges ? _loc.Get("history.emptyFilterTitle") : _loc.Get("history.emptyTitle");
 
     public string EmptyChangesMessage => HasAnyChanges
@@ -130,6 +157,27 @@ public partial class HistoryViewModel : ObservableObject
         : _loc.Get("history.emptyMsg");
 
     partial void OnFilterIndexChanged(int value) => RebuildChangeGroups();
+
+    [RelayCommand]
+    private void SetFilter(string? mode)
+    {
+        var next = mode switch
+        {
+            "Active" => 1,
+            "Reverted" => 2,
+            _ => 0
+        };
+
+        if (FilterIndex == next)
+        {
+            OnPropertyChanged(nameof(IsFilterAll));
+            OnPropertyChanged(nameof(IsFilterActive));
+            OnPropertyChanged(nameof(IsFilterReverted));
+            return;
+        }
+
+        FilterIndex = next;
+    }
 
     [RelayCommand]
     public async Task RefreshAsync()
@@ -295,6 +343,114 @@ public partial class HistoryViewModel : ObservableObject
         {
             _logger.LogError(ex, "Failed to restore point {Id}", selected.Point.Id);
             await _dialogs.ShowErrorAsync(_loc.Get("history.restoreFailed"), ex.Message);
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+    }
+
+    [RelayCommand]
+    private async Task DeleteSelectedChangesAsync()
+    {
+        var selected = _changeItems.Where(item => item.IsSelected).ToList();
+        if (selected.Count == 0)
+        {
+            return;
+        }
+
+        var confirmed = await _dialogs.ConfirmAsync(
+            _loc.Get("history.deleteChangesTitle"),
+            _loc.Get("history.deleteChangesBody", selected.Count),
+            _loc.Get("history.deleteChangesWarning"),
+            _loc.Get("common.delete"));
+        if (!confirmed)
+        {
+            return;
+        }
+
+        try
+        {
+            IsBusy = true;
+            await _history.DeleteAsync(selected.Select(item => item.Record.Id).ToList());
+            await RefreshAsync();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to delete selected history rows.");
+            await _dialogs.ShowErrorAsync(_loc.Get("history.deleteFailed"), ex.Message);
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+    }
+
+    [RelayCommand]
+    private async Task DeleteSelectedRestorePointsAsync()
+    {
+        var selected = RestoreItems.Where(item => item.IsSelected).ToList();
+        if (selected.Count == 0)
+        {
+            return;
+        }
+
+        var confirmed = await _dialogs.ConfirmAsync(
+            _loc.Get("history.deleteRestoreTitle"),
+            _loc.Get("history.deleteRestoreBody", selected.Count),
+            _loc.Get("history.deleteRestoreWarning"),
+            _loc.Get("common.delete"));
+        if (!confirmed)
+        {
+            return;
+        }
+
+        try
+        {
+            IsBusy = true;
+            await _backup.DeleteAsync(selected.Select(item => item.Point.Id).ToList());
+            await RefreshAsync();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to delete selected restore points.");
+            await _dialogs.ShowErrorAsync(_loc.Get("history.deleteFailed"), ex.Message);
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+    }
+
+    [RelayCommand]
+    private async Task ClearHistoryAsync()
+    {
+        if (!HasAnyChanges && !HasRestorePoints)
+        {
+            return;
+        }
+
+        var confirmed = await _dialogs.ConfirmAsync(
+            _loc.Get("history.clearTitle"),
+            _loc.Get("history.clearBody", _changeItems.Count, RestoreItems.Count),
+            _loc.Get("history.clearWarning"),
+            _loc.Get("history.clearButton"));
+        if (!confirmed)
+        {
+            return;
+        }
+
+        try
+        {
+            IsBusy = true;
+            await _history.ClearAsync();
+            await _backup.ClearAsync();
+            await RefreshAsync();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to clear history.");
+            await _dialogs.ShowErrorAsync(_loc.Get("history.deleteFailed"), ex.Message);
         }
         finally
         {
