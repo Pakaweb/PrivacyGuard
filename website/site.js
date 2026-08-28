@@ -8,9 +8,9 @@
   const flags = window.PG_SITE_FLAGS || {};
   const en = tables["en-US"] || {};
   const extraI18n = {
-    "download.cardTitle": "GitHub Releases",
-    "download.cardBody": "Get the latest x64 installer from GitHub Releases. Windows SmartScreen may warn until the file is Authenticode-signed. Prefer this site or the official GitHub repo — not random mirrors.",
-    "download.get": "Download latest release"
+    "download.cardTitle": "PrivacyGuard for Windows — $19.99",
+   "download.cardBody": "Get the latest x64 installer from GitHub Releases. Windows SmartScreen may warn until the file is Authenticode-signed. Prefer this site or the official GitHub repo — not random mirrors.",
+    "download.get": "Buy for $19.99"
   };
   Object.assign(en, extraI18n);
   const PATH_HTML = "<code>%LocalAppData%\\PrivacyGuard\\</code>";
