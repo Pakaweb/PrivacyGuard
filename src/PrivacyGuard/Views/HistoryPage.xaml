@@ -6,7 +6,7 @@
     xmlns:vm="using:PrivacyGuard.ViewModels"
     NavigationCacheMode="Disabled">
 
-  <Grid Padding="{StaticResource PagePadding}" RowSpacing="16">
+  <Grid Padding="{StaticResource PagePadding}" RowSpacing="20">
     <Grid.RowDefinitions>
       <RowDefinition Height="Auto" />
       <RowDefinition Height="Auto" />
@@ -20,22 +20,70 @@
           Text="{x:Bind ViewModel.Loc.T(ViewModel.Loc.Stamp, 'history.subtitle'), Mode=OneWay}" />
     </StackPanel>
 
-    <InfoBar
+    <Border
         Grid.Row="1"
-        IsClosable="False"
-        IsOpen="True"
-        Message="{x:Bind ViewModel.StatusMessage, Mode=OneWay}"
-        Severity="Informational"
-        Title="{x:Bind ViewModel.Loc.T(ViewModel.Loc.Stamp, 'history.audit'), Mode=OneWay}" />
+        Style="{StaticResource DashboardAlertStyle}"
+        Padding="0">
+      <Grid>
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="3" />
+          <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Border
+            Background="{ThemeResource DashboardResetStripeBrush}"
+            CornerRadius="12,0,0,12" />
+        <Grid Grid.Column="1" Padding="14,12,14,12" ColumnSpacing="14">
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+          </Grid.ColumnDefinitions>
+          <Border
+              Width="36"
+              Height="36"
+              VerticalAlignment="Center"
+              Background="{ThemeResource SubtleFillColorSecondaryBrush}"
+              CornerRadius="18">
+            <FontIcon
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                FontFamily="Segoe Fluent Icons"
+                FontSize="15"
+                Glyph="&#xE81C;" />
+          </Border>
+          <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
+            <TextBlock
+                FontWeight="SemiBold"
+                Text="{x:Bind ViewModel.Loc.T(ViewModel.Loc.Stamp, 'history.audit'), Mode=OneWay}" />
+            <TextBlock
+                FontSize="12"
+                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                Text="{x:Bind ViewModel.StatusMessage, Mode=OneWay}"
+                TextWrapping="Wrap" />
+          </StackPanel>
+          <Button
+              Grid.Column="2"
+              VerticalAlignment="Center"
+              Command="{x:Bind ViewModel.ClearHistoryCommand}"
+              IsEnabled="{x:Bind ViewModel.CanClearHistory, Mode=OneWay}"
+              Style="{StaticResource HistoryActionButtonStyle}">
+            <StackPanel Orientation="Horizontal" Spacing="8">
+              <FontIcon FontFamily="Segoe Fluent Icons" FontSize="14" Glyph="&#xE74D;" />
+              <TextBlock Text="{x:Bind ViewModel.Loc.T(ViewModel.Loc.Stamp, 'history.clearButton'), Mode=OneWay}" />
+            </StackPanel>
+          </Button>
+        </Grid>
+      </Grid>
+    </Border>
 
-    <Grid Grid.Row="2" ColumnSpacing="18">
+    <Grid Grid.Row="2" ColumnSpacing="20">
       <Grid.ColumnDefinitions>
         <ColumnDefinition Width="2*" />
-        <ColumnDefinition Width="*" MinWidth="280" />
+        <ColumnDefinition Width="*" MinWidth="300" />
       </Grid.ColumnDefinitions>
 
-      <Border Padding="18,16" Style="{StaticResource PrivacyCardStyle}">
-        <Grid RowSpacing="12">
+      <Border Padding="20,18" Style="{StaticResource PrivacyCardStyle}">
+        <Grid RowSpacing="16">
           <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
@@ -48,23 +96,53 @@
               <ColumnDefinition Width="*" />
               <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <TextBlock VerticalAlignment="Center" FontSize="18" FontWeight="SemiBold" Text="{x:Bind ViewModel.Loc.T(ViewModel.Loc.Stamp, 'history.changes'), Mode=OneWay}" />
+            <TextBlock
+                VerticalAlignment="Center"
+                FontSize="18"
+                FontWeight="SemiBold"
+                Text="{x:Bind ViewModel.Loc.T(ViewModel.Loc.Stamp, 'history.changes'), Mode=OneWay}" />
             <Button
                 Grid.Column="1"
                 Command="{x:Bind ViewModel.RefreshCommand}"
-                Content="{x:Bind ViewModel.Loc.T(ViewModel.Loc.Stamp, 'common.refresh'), Mode=OneWay}" />
+                Style="{StaticResource HistoryActionButtonStyle}">
+              <StackPanel Orientation="Horizontal" Spacing="8">
+                <FontIcon FontFamily="Segoe Fluent Icons" FontSize="14" Glyph="&#xE72C;" />
+                <TextBlock Text="{x:Bind ViewModel.Loc.T(ViewModel.Loc.Stamp, 'common.refresh'), Mode=OneWay}" />
+              </StackPanel>
+            </Button>
           </Grid>
 
-          <RadioButtons
+          <StackPanel
               Grid.Row="1"
-              MaxColumns="3"
-              ItemsSource="{x:Bind ViewModel.FilterLabels}"
-              SelectedIndex="{x:Bind ViewModel.FilterIndex, Mode=TwoWay}" />
+              Orientation="Horizontal"
+              Spacing="6">
+            <ToggleButton
+                Command="{x:Bind ViewModel.SetFilterCommand}"
+                CommandParameter="All"
+                Content="{x:Bind ViewModel.Loc.T(ViewModel.Loc.Stamp, 'history.filterAll'), Mode=OneWay}"
+                IsChecked="{x:Bind ViewModel.IsFilterAll, Mode=OneWay}"
+                Style="{StaticResource DashboardFilterChipStyle}" />
+            <ToggleButton
+                Command="{x:Bind ViewModel.SetFilterCommand}"
+                CommandParameter="Active"
+                Content="{x:Bind ViewModel.Loc.T(ViewModel.Loc.Stamp, 'history.filterActive'), Mode=OneWay}"
+                IsChecked="{x:Bind ViewModel.IsFilterActive, Mode=OneWay}"
+                Style="{StaticResource DashboardFilterChipStyle}" />
+            <ToggleButton
+                Command="{x:Bind ViewModel.SetFilterCommand}"
+                CommandParameter="Reverted"
+                Content="{x:Bind ViewModel.Loc.T(ViewModel.Loc.Stamp, 'history.filterReverted'), Mode=OneWay}"
+                IsChecked="{x:Bind ViewModel.IsFilterReverted, Mode=OneWay}"
+                Style="{StaticResource DashboardFilterChipStyle}" />
+          </StackPanel>
 
-          <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
+          <ScrollViewer
+              Grid.Row="2"
+              BringIntoViewOnFocusChange="False"
+              VerticalScrollBarVisibility="Auto">
             <Grid>
               <StackPanel
-                  Padding="16,36"
+                  Padding="16,40"
                   HorizontalAlignment="Center"
                   VerticalAlignment="Center"
                   Spacing="10"
@@ -89,7 +167,7 @@
                     FontWeight="SemiBold"
                     Text="{x:Bind ViewModel.EmptyChangesTitle, Mode=OneWay}" />
                 <TextBlock
-                    MaxWidth="240"
+                    MaxWidth="260"
                     HorizontalAlignment="Center"
                     FontSize="12"
                     Foreground="{ThemeResource TextFillColorSecondaryBrush}"
@@ -102,21 +180,22 @@
                   ItemsSource="{x:Bind ViewModel.ChangeGroups, Mode=OneWay}"
                   Visibility="{x:Bind ViewModel.HasVisibleChanges, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
                 <ItemsRepeater.Layout>
-                  <StackLayout Spacing="14" />
+                  <StackLayout Spacing="20" />
                 </ItemsRepeater.Layout>
                 <ItemsRepeater.ItemTemplate>
                   <DataTemplate x:DataType="vm:HistoryDayGroup">
-                    <StackPanel Spacing="8">
+                    <StackPanel Spacing="12">
                       <TextBlock
-                          Margin="4,0,0,2"
+                          Margin="6,0,0,2"
                           FontSize="12"
                           FontWeight="SemiBold"
+                          CharacterSpacing="20"
                           Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                           Text="{x:Bind Title}"
                           Visibility="{x:Bind ShowTitle, Converter={StaticResource BoolToVisibilityConverter}}" />
                       <ItemsRepeater ItemsSource="{x:Bind Items}">
                         <ItemsRepeater.Layout>
-                          <StackLayout Spacing="8" />
+                          <StackLayout Spacing="12" />
                         </ItemsRepeater.Layout>
                         <ItemsRepeater.ItemTemplate>
                           <DataTemplate x:DataType="vm:HistoryChangeItem">
@@ -124,8 +203,8 @@
                                 Padding="0"
                                 Background="{x:Bind CardState, Mode=OneWay, Converter={StaticResource HistoryRowBackgroundConverter}}"
                                 BorderBrush="{x:Bind CardState, Mode=OneWay, Converter={StaticResource HistoryRowBorderBrushConverter}}"
-                                BorderThickness="1"
-                                CornerRadius="10"
+                                BorderThickness="{x:Bind CardBorderThickness, Mode=OneWay}"
+                                CornerRadius="12"
                                 PointerEntered="HistoryRow_PointerEntered"
                                 PointerExited="HistoryRow_PointerExited"
                                 Tag="{x:Bind}">
@@ -135,7 +214,7 @@
                                   <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
                                 <Rectangle Fill="{x:Bind CardState, Mode=OneWay, Converter={StaticResource HistoryAccentBrushConverter}}" />
-                                <Grid Grid.Column="1" Padding="10,10,12,10" RowSpacing="8">
+                                <Grid Grid.Column="1" Padding="14,14,14,14" ColumnSpacing="12" RowSpacing="0">
                                   <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto" />
                                     <ColumnDefinition Width="Auto" />
@@ -147,14 +226,14 @@
                                       Width="24"
                                       MinWidth="0"
                                       MinHeight="0"
+                                      Margin="0,6,0,0"
                                       Padding="0"
                                       VerticalAlignment="Top"
                                       IsChecked="{x:Bind IsSelected, Mode=TwoWay}" />
                                   <Border
                                       Grid.Column="1"
-                                      Width="36"
-                                      Height="36"
-                                      Margin="4,0,10,0"
+                                      Width="40"
+                                      Height="40"
                                       VerticalAlignment="Top"
                                       Background="{ThemeResource SubtleFillColorSecondaryBrush}"
                                       CornerRadius="10">
@@ -165,66 +244,76 @@
                                         FontSize="16"
                                         Glyph="{x:Bind Glyph}" />
                                   </Border>
-                                  <StackPanel Grid.Column="2" Spacing="6">
+                                  <StackPanel Grid.Column="2" Spacing="8">
                                     <TextBlock
+                                        FontSize="14"
                                         FontWeight="SemiBold"
                                         Text="{x:Bind SettingName}"
                                         TextWrapping="Wrap" />
                                     <TextBlock
-                                        FontSize="11"
+                                        FontSize="12"
                                         Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                         Text="{x:Bind MetaLabel, Mode=OneWay}"
                                         TextWrapping="Wrap" />
-                                    <StackPanel Orientation="Horizontal" Spacing="6">
+                                    <StackPanel Orientation="Horizontal" Spacing="8">
                                       <Border
-                                          Padding="8,3"
-                                          Background="{ThemeResource SubtleFillColorTertiaryBrush}"
-                                          CornerRadius="8">
-                                        <TextBlock FontSize="11" Opacity="0.78" Text="{x:Bind OldLabel}" />
+                                          Padding="10,5"
+                                          MaxWidth="240"
+                                          Background="{x:Bind OldTone, Converter={StaticResource HistoryToneBrushConverter}, ConverterParameter=bg}"
+                                          CornerRadius="9">
+                                        <TextBlock
+                                            FontSize="12"
+                                            Foreground="{x:Bind OldTone, Converter={StaticResource HistoryToneBrushConverter}}"
+                                            Text="{x:Bind OldLabel}"
+                                            TextWrapping="Wrap" />
                                       </Border>
                                       <FontIcon
+                                          Margin="0,2,0,0"
                                           VerticalAlignment="Center"
                                           FontFamily="Segoe Fluent Icons"
-                                          FontSize="10"
+                                          FontSize="11"
                                           Foreground="{ThemeResource TextFillColorTertiaryBrush}"
                                           Glyph="&#xE72A;" />
                                       <Border
-                                          Padding="8,3"
+                                          Padding="10,5"
+                                          MaxWidth="240"
                                           Background="{x:Bind NewTone, Converter={StaticResource HistoryToneBrushConverter}, ConverterParameter=bg}"
-                                          CornerRadius="8">
+                                          CornerRadius="9">
                                         <TextBlock
-                                            FontSize="11"
+                                            FontSize="12"
                                             FontWeight="SemiBold"
                                             Foreground="{x:Bind NewTone, Converter={StaticResource HistoryToneBrushConverter}}"
-                                            Text="{x:Bind NewLabel}" />
+                                            Text="{x:Bind NewLabel}"
+                                            TextWrapping="Wrap" />
                                       </Border>
                                     </StackPanel>
                                     <Border
-                                        Margin="0"
-                                        Padding="8,5"
+                                        Padding="10,8"
                                         Background="{ThemeResource SubtleFillColorSecondaryBrush}"
-                                        CornerRadius="8"
+                                        CornerRadius="10"
                                         Visibility="{x:Bind IsExpanded, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
-                                      <StackPanel Spacing="1">
-                                        <TextBlock FontSize="11" LineHeight="15" Foreground="{ThemeResource TextFillColorSecondaryBrush}">
+                                      <StackPanel Spacing="4">
+                                        <TextBlock FontSize="12" LineHeight="18" Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextWrapping="Wrap">
                                           <Run Text="{x:Bind SettingKeyPrefix}" />
                                           <Run Text="{x:Bind SettingKey}" />
                                         </TextBlock>
-                                        <TextBlock FontSize="11" LineHeight="15" Foreground="{ThemeResource TextFillColorSecondaryBrush}">
+                                        <TextBlock FontSize="12" LineHeight="18" Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextWrapping="Wrap">
                                           <Run Text="{x:Bind SourcePrefix}" />
                                           <Run Text="{x:Bind ProfileLabel}" />
                                         </TextBlock>
                                         <TextBlock
-                                            FontSize="11"
-                                            LineHeight="15"
+                                            FontSize="12"
+                                            LineHeight="18"
                                             Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                             Text="{x:Bind RestorePointLabel}"
+                                            TextWrapping="Wrap"
                                             Visibility="{x:Bind RestorePointLabel, Converter={StaticResource NullToVisibilityConverter}}" />
                                         <TextBlock
-                                            FontSize="11"
-                                            LineHeight="15"
+                                            FontSize="12"
+                                            LineHeight="18"
                                             Foreground="#C42B1C"
                                             Text="{x:Bind ErrorLabel}"
+                                            TextWrapping="Wrap"
                                             Visibility="{x:Bind ErrorLabel, Converter={StaticResource NullToVisibilityConverter}}" />
                                       </StackPanel>
                                     </Border>
@@ -252,6 +341,7 @@
                                       VerticalAlignment="Top"
                                       Background="Transparent"
                                       BorderThickness="0"
+                                      CornerRadius="8"
                                       Command="{x:Bind ToggleExpandCommand}">
                                     <FontIcon
                                         FontFamily="Segoe Fluent Icons"
@@ -271,57 +361,91 @@
             </Grid>
           </ScrollViewer>
 
-          <Grid Grid.Row="3" Margin="0,4,0,0" ColumnSpacing="12">
-            <Grid.ColumnDefinitions>
-              <ColumnDefinition Width="*" />
-              <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
-            <TextBlock
-                VerticalAlignment="Center"
-                FontSize="12"
-                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                Text="{x:Bind ViewModel.ChangeSelectionLabel, Mode=OneWay}" />
-            <Button
-                Grid.Column="1"
-                MinHeight="40"
-                Padding="16,6"
-                Command="{x:Bind ViewModel.RevertSelectedCommand}"
-                Content="{x:Bind ViewModel.RevertButtonLabel, Mode=OneWay}"
-                IsEnabled="{x:Bind ViewModel.CanRevertNow, Mode=OneWay}"
-                Style="{StaticResource AccentButtonStyle}"
-                Visibility="{x:Bind ViewModel.HasSelectedRevertable, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
-            <Button
-                Grid.Column="1"
-                MinHeight="40"
-                Padding="16,6"
-                Content="{x:Bind ViewModel.Loc.T(ViewModel.Loc.Stamp, 'history.revertSelected'), Mode=OneWay}"
-                IsEnabled="False"
-                Visibility="{x:Bind ViewModel.HasSelectedRevertable, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
-          </Grid>
+          <Border
+              Grid.Row="3"
+              Padding="0,16,0,0"
+              BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+              BorderThickness="0,1,0,0">
+            <Grid ColumnSpacing="10">
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+              </Grid.ColumnDefinitions>
+              <Border
+                  Padding="10,6"
+                  HorizontalAlignment="Left"
+                  VerticalAlignment="Center"
+                  Background="{ThemeResource SubtleFillColorSecondaryBrush}"
+                  CornerRadius="8">
+                <TextBlock
+                    FontSize="12"
+                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                    Opacity="0.92"
+                    Text="{x:Bind ViewModel.ChangeSelectionLabel, Mode=OneWay}" />
+              </Border>
+              <Button
+                  Grid.Column="1"
+                  Command="{x:Bind ViewModel.DeleteSelectedChangesCommand}"
+                  IsEnabled="{x:Bind ViewModel.CanDeleteChanges, Mode=OneWay}"
+                  Style="{StaticResource HistoryActionButtonStyle}">
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                  <FontIcon FontFamily="Segoe Fluent Icons" FontSize="14" Glyph="&#xE74D;" />
+                  <TextBlock Text="{x:Bind ViewModel.DeleteChangesLabel, Mode=OneWay}" />
+                </StackPanel>
+              </Button>
+              <Button
+                  Grid.Column="2"
+                  MinHeight="40"
+                  Padding="16,8"
+                  Command="{x:Bind ViewModel.RevertSelectedCommand}"
+                  IsEnabled="{x:Bind ViewModel.CanRevertNow, Mode=OneWay}"
+                  Style="{StaticResource AccentButtonStyle}"
+                  Visibility="{x:Bind ViewModel.HasSelectedRevertable, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                  <FontIcon FontFamily="Segoe Fluent Icons" FontSize="14" Glyph="&#xE777;" />
+                  <TextBlock Text="{x:Bind ViewModel.RevertButtonLabel, Mode=OneWay}" />
+                </StackPanel>
+              </Button>
+              <Button
+                  Grid.Column="2"
+                  IsEnabled="False"
+                  Style="{StaticResource HistoryActionButtonStyle}"
+                  Visibility="{x:Bind ViewModel.HasSelectedRevertable, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
+                <StackPanel Opacity="0.72" Orientation="Horizontal" Spacing="8">
+                  <FontIcon FontFamily="Segoe Fluent Icons" FontSize="14" Glyph="&#xE777;" />
+                  <TextBlock Text="{x:Bind ViewModel.Loc.T(ViewModel.Loc.Stamp, 'history.revertSelected'), Mode=OneWay}" />
+                </StackPanel>
+              </Button>
+            </Grid>
+          </Border>
         </Grid>
       </Border>
 
-      <Border Grid.Column="1" Padding="16" Style="{StaticResource PrivacyCardStyle}">
-        <Grid RowSpacing="14">
+      <Border Grid.Column="1" Padding="18,18" Style="{StaticResource PrivacyCardStyle}">
+        <Grid RowSpacing="16">
           <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
           </Grid.RowDefinitions>
 
-          <StackPanel Spacing="2">
+          <StackPanel Spacing="4">
             <TextBlock FontSize="18" FontWeight="SemiBold" Text="{x:Bind ViewModel.Loc.T(ViewModel.Loc.Stamp, 'history.restorePoints'), Mode=OneWay}" />
             <TextBlock
                 FontSize="12"
                 Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                Opacity="0.92"
-                Text="{x:Bind ViewModel.Loc.T(ViewModel.Loc.Stamp, 'history.restorePointsSub'), Mode=OneWay}" />
+                Text="{x:Bind ViewModel.Loc.T(ViewModel.Loc.Stamp, 'history.restorePointsSub'), Mode=OneWay}"
+                TextWrapping="Wrap" />
           </StackPanel>
 
-          <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+          <ScrollViewer
+              Grid.Row="1"
+              BringIntoViewOnFocusChange="False"
+              VerticalScrollBarVisibility="Auto">
             <Grid>
               <StackPanel
-                  Padding="12,36"
+                  Padding="12,40"
                   HorizontalAlignment="Center"
                   VerticalAlignment="Center"
                   Spacing="10"
@@ -346,7 +470,7 @@
                     FontWeight="SemiBold"
                     Text="{x:Bind ViewModel.Loc.T(ViewModel.Loc.Stamp, 'history.noRestoreTitle'), Mode=OneWay}" />
                 <TextBlock
-                    MaxWidth="200"
+                    MaxWidth="220"
                     HorizontalAlignment="Center"
                     FontSize="12"
                     Foreground="{ThemeResource TextFillColorSecondaryBrush}"
@@ -359,15 +483,15 @@
                   ItemsSource="{x:Bind ViewModel.RestoreItems, Mode=OneWay}"
                   Visibility="{x:Bind ViewModel.HasRestorePoints, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
                 <ItemsRepeater.Layout>
-                  <StackLayout Spacing="10" />
+                  <StackLayout Spacing="12" />
                 </ItemsRepeater.Layout>
                 <ItemsRepeater.ItemTemplate>
                   <DataTemplate x:DataType="vm:HistoryRestoreItem">
                     <Border
                         Background="{x:Bind CardState, Mode=OneWay, Converter={StaticResource HistoryRowBackgroundConverter}, ConverterParameter=restore}"
                         BorderBrush="{x:Bind CardState, Mode=OneWay, Converter={StaticResource HistoryRowBorderBrushConverter}, ConverterParameter=restore}"
-                        BorderThickness="1"
-                        CornerRadius="10"
+                        BorderThickness="{x:Bind CardBorderThickness, Mode=OneWay}"
+                        CornerRadius="12"
                         PointerEntered="HistoryRow_PointerEntered"
                         PointerExited="HistoryRow_PointerExited"
                         Tag="{x:Bind}">
@@ -378,9 +502,8 @@
                         </Grid.ColumnDefinitions>
                         <Border
                             Background="{ThemeResource AccentFillColorDefaultBrush}"
-                            CornerRadius="3,0,0,3"
-                            Opacity="0.85" />
-                        <Grid Grid.Column="1" Padding="8,9,8,9" ColumnSpacing="10">
+                            CornerRadius="3,0,0,3" />
+                        <Grid Grid.Column="1" Padding="12,12,12,12" ColumnSpacing="10">
                           <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="Auto" />
@@ -388,74 +511,89 @@
                             <ColumnDefinition Width="Auto" />
                           </Grid.ColumnDefinitions>
                           <CheckBox
-                              Width="20"
+                              Width="24"
                               MinWidth="0"
                               MinHeight="0"
+                              Margin="0,8,0,0"
                               Padding="0"
-                              VerticalAlignment="Center"
+                              VerticalAlignment="Top"
                               IsChecked="{x:Bind IsSelected, Mode=TwoWay}" />
                           <Border
                               Grid.Column="1"
-                              Width="32"
-                              Height="32"
-                              VerticalAlignment="Center"
+                              Width="40"
+                              Height="40"
+                              VerticalAlignment="Top"
                               Background="{ThemeResource SubtleFillColorSecondaryBrush}"
-                              CornerRadius="8">
+                              CornerRadius="10">
                             <FontIcon
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
                                 FontFamily="Segoe Fluent Icons"
-                                FontSize="14"
+                                FontSize="16"
                                 Foreground="{ThemeResource AccentFillColorDefaultBrush}"
                                 Glyph="&#xE8C7;" />
                           </Border>
-                          <StackPanel Grid.Column="2" VerticalAlignment="Center" Spacing="3">
+                          <StackPanel Grid.Column="2" Spacing="8">
                             <TextBlock
                                 FontSize="14"
                                 FontWeight="SemiBold"
                                 Text="{x:Bind Description}"
                                 TextWrapping="Wrap" />
                             <TextBlock
-                                FontSize="11"
-                                Foreground="{ThemeResource TextFillColorTertiaryBrush}"
-                                Opacity="0.92"
-                                Text="{x:Bind CreatedAtLabel}" />
-                            <TextBlock
-                                FontSize="11"
-                                FontWeight="SemiBold"
-                                Opacity="0.82"
-                                Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}"
-                                Text="{x:Bind SettingCountLabel}" />
+                                FontSize="12"
+                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                Text="{x:Bind CreatedAtLabel}"
+                                TextWrapping="Wrap" />
+                            <Border
+                                Padding="8,4"
+                                HorizontalAlignment="Left"
+                                Background="{ThemeResource SubtleFillColorSecondaryBrush}"
+                                CornerRadius="8">
+                              <StackPanel Orientation="Horizontal" Spacing="6">
+                                <FontIcon
+                                    VerticalAlignment="Center"
+                                    FontFamily="Segoe Fluent Icons"
+                                    FontSize="11"
+                                    Foreground="{ThemeResource AccentFillColorDefaultBrush}"
+                                    Glyph="&#xE8F1;" />
+                                <TextBlock
+                                    VerticalAlignment="Center"
+                                    FontSize="11"
+                                    FontWeight="SemiBold"
+                                    Text="{x:Bind SettingCountLabel}" />
+                              </StackPanel>
+                            </Border>
                             <ItemsRepeater
                                 Margin="0,2,0,0"
                                 ItemsSource="{x:Bind PreviewSettings}"
                                 Visibility="{x:Bind IsExpanded, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
                               <ItemsRepeater.Layout>
-                                <StackLayout Spacing="1" />
+                                <StackLayout Spacing="4" />
                               </ItemsRepeater.Layout>
                               <ItemsRepeater.ItemTemplate>
                                 <DataTemplate x:DataType="sys:String">
                                   <TextBlock
-                                      FontSize="11"
+                                      FontSize="12"
                                       Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                      Text="{x:Bind}" />
+                                      Text="{x:Bind}"
+                                      TextWrapping="Wrap" />
                                 </DataTemplate>
                               </ItemsRepeater.ItemTemplate>
                             </ItemsRepeater>
                           </StackPanel>
                           <Button
                               Grid.Column="3"
-                              Width="28"
-                              Height="28"
-                              Margin="0,0,2,0"
+                              Width="32"
+                              Height="32"
                               Padding="0"
                               VerticalAlignment="Top"
                               Background="Transparent"
                               BorderThickness="0"
+                              CornerRadius="8"
                               Command="{x:Bind ToggleExpandCommand}">
                             <FontIcon
                                 FontFamily="Segoe Fluent Icons"
-                                FontSize="11"
+                                FontSize="12"
                                 Foreground="{ThemeResource TextFillColorTertiaryBrush}"
                                 Glyph="{x:Bind ChevronGlyph, Mode=OneWay}" />
                           </Button>
@@ -470,33 +608,58 @@
 
           <Border
               Grid.Row="2"
-              Padding="0,14,0,0"
+              Padding="0,16,0,0"
               BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
               BorderThickness="0,1,0,0">
             <StackPanel Spacing="10">
-              <TextBlock
-                  FontSize="12"
-                  FontWeight="Medium"
-                  Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                  Text="{x:Bind ViewModel.RestoreSelectionLabel, Mode=OneWay}" />
+              <Border
+                  Padding="10,6"
+                  HorizontalAlignment="Left"
+                  Background="{ThemeResource SubtleFillColorSecondaryBrush}"
+                  CornerRadius="8">
+                <TextBlock
+                    FontSize="12"
+                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                    Opacity="0.92"
+                    Text="{x:Bind ViewModel.RestoreSelectionLabel, Mode=OneWay}" />
+              </Border>
               <Button
                   MinHeight="40"
-                  Padding="16,6"
+                  Padding="16,8"
                   HorizontalAlignment="Stretch"
-                  FontWeight="SemiBold"
                   Command="{x:Bind ViewModel.RestoreSelectedPointCommand}"
-                  Content="{x:Bind ViewModel.Loc.T(ViewModel.Loc.Stamp, 'history.restoreButton'), Mode=OneWay}"
                   IsEnabled="{x:Bind ViewModel.CanRestoreNow, Mode=OneWay}"
                   Style="{StaticResource AccentButtonStyle}"
-                  Visibility="{x:Bind ViewModel.HasSelectedRestorePoint, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                  Visibility="{x:Bind ViewModel.HasSelectedRestorePoint, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+                <StackPanel HorizontalAlignment="Center" Orientation="Horizontal" Spacing="8">
+                  <FontIcon FontFamily="Segoe Fluent Icons" FontSize="14" Glyph="&#xE777;" />
+                  <TextBlock
+                      FontWeight="SemiBold"
+                      Text="{x:Bind ViewModel.Loc.T(ViewModel.Loc.Stamp, 'history.restoreButton'), Mode=OneWay}" />
+                </StackPanel>
+              </Button>
               <Button
                   MinHeight="40"
-                  Padding="16,6"
+                  Padding="16,8"
                   HorizontalAlignment="Stretch"
-                  FontWeight="SemiBold"
-                  Content="{x:Bind ViewModel.Loc.T(ViewModel.Loc.Stamp, 'history.restoreButton'), Mode=OneWay}"
                   IsEnabled="False"
-                  Visibility="{x:Bind ViewModel.HasSelectedRestorePoint, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
+                  Style="{StaticResource HistoryActionButtonStyle}"
+                  Visibility="{x:Bind ViewModel.HasSelectedRestorePoint, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
+                <StackPanel HorizontalAlignment="Center" Opacity="0.72" Orientation="Horizontal" Spacing="8">
+                  <FontIcon FontFamily="Segoe Fluent Icons" FontSize="14" Glyph="&#xE777;" />
+                  <TextBlock Text="{x:Bind ViewModel.Loc.T(ViewModel.Loc.Stamp, 'history.restoreButton'), Mode=OneWay}" />
+                </StackPanel>
+              </Button>
+              <Button
+                  HorizontalAlignment="Stretch"
+                  Command="{x:Bind ViewModel.DeleteSelectedRestorePointsCommand}"
+                  IsEnabled="{x:Bind ViewModel.CanDeleteRestorePoints, Mode=OneWay}"
+                  Style="{StaticResource HistoryActionButtonStyle}">
+                <StackPanel HorizontalAlignment="Center" Orientation="Horizontal" Spacing="8">
+                  <FontIcon FontFamily="Segoe Fluent Icons" FontSize="14" Glyph="&#xE74D;" />
+                  <TextBlock Text="{x:Bind ViewModel.Loc.T(ViewModel.Loc.Stamp, 'history.deleteSelected'), Mode=OneWay}" />
+                </StackPanel>
+              </Button>
             </StackPanel>
           </Border>
         </Grid>
