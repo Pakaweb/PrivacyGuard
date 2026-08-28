@@ -8,11 +8,40 @@
   const flags = window.PG_SITE_FLAGS || {};
   const en = tables["en-US"] || {};
   const extraI18n = {
-    "download.cardTitle": "PrivacyGuard for Windows — $19.99",
-   "download.cardBody":"One-time purchase. After checkout you get the x64 installer. Buy only from this site.",
-    "download.get": "Buy for $19.99"
+    "meta.title.download": "Buy PrivacyGuard for Windows",
+    "meta.desc.download": "One-time purchase. Full control over Windows privacy. Fully reversible. $19.99 for Windows 10 and 11.",
+    "download.kicker": "Windows 10 and 11",
+    "download.title": "Take back control of Windows privacy",
+    "download.lede": "One-time purchase. Full control over Windows privacy. Fully reversible.",
+    "download.official": "Official purchase",
+    "download.cardTitle": "PrivacyGuard",
+    "download.priceOnce": "one-time",
+    "download.terms": "One-time payment · Lifetime license · No subscription",
+    "download.get": "Buy now — $19.99",
+    "download.badgeSecure": "Secure checkout",
+    "download.badgeInstant": "Instant download",
+    "download.badgeSupport": "14-day support",
+    "download.includedTitle": "What's included",
+    "download.incScore": "Privacy score dashboard",
+    "download.incProfiles": "Recommended and custom profiles",
+    "download.incHistory": "Full history and restore points",
+    "download.incTray": "System tray controls",
+    "download.incExport": "Export and import on this PC",
+    "download.guarantee": "30-day money-back through Gumroad if it is not the right fit.",
+    "download.source": "View source on GitHub",
+    "download.trustLocal": "100% local — nothing leaves your PC",
+    "download.trustRevert": "All changes are reversible",
+    "download.trustAccount": "No Microsoft account required",
+    "download.trustOss": "Open source on GitHub",
+    "download.warnTitle": "Buy only from this website",
+    "download.warnBody": "Checkout is on Gumroad from this page. After payment you get the x64 installer by email. Windows SmartScreen may warn until the file is signed — choose More info, then Run anyway. Do not install copies from random mirrors.",
+    "download.reqAccountBody": "History and restore points stay on this PC under {path}.",
+    "cta.sub": "Local, reversible, and honest about SKU limits. One-time purchase, $19.99. No Google Play listing, no account required."
   };
   Object.assign(en, extraI18n);
+  for (const table of Object.values(tables)) {
+    Object.assign(table, extraI18n);
+  }
   const PATH_HTML = "<code>%LocalAppData%\\PrivacyGuard\\</code>";
   const PATH_TEXT = "%LocalAppData%\\PrivacyGuard\\";
 
