@@ -12,6 +12,8 @@
       <SolidColorBrush x:Key="DashboardResetBackgroundBrush" Color="#1A222C" />
       <SolidColorBrush x:Key="DashboardResetStripeBrush" Color="#7EA2C8" />
       <SolidColorBrush x:Key="DashboardSearchBackgroundBrush" Color="#14FFFFFF" />
+      <SolidColorBrush x:Key="DiagTrackTradeOffBackgroundBrush" Color="#3DE88A1A" />
+      <SolidColorBrush x:Key="DiagTrackTradeOffForegroundBrush" Color="#F0C36A" />
     </ResourceDictionary>
     <ResourceDictionary x:Key="Light">
       <SolidColorBrush x:Key="HistorySuccessBadgeBackgroundBrush" Color="#B7E6C6" />
@@ -22,10 +24,12 @@
       <SolidColorBrush x:Key="DashboardResetBackgroundBrush" Color="#EEF3F8" />
       <SolidColorBrush x:Key="DashboardResetStripeBrush" Color="#4F7394" />
       <SolidColorBrush x:Key="DashboardSearchBackgroundBrush" Color="#0A000000" />
+      <SolidColorBrush x:Key="DiagTrackTradeOffBackgroundBrush" Color="#33C97B23" />
+      <SolidColorBrush x:Key="DiagTrackTradeOffForegroundBrush" Color="#9A5B12" />
     </ResourceDictionary>
   </ResourceDictionary.ThemeDictionaries>
 
-  <Thickness x:Key="PagePadding">32,20,32,32</Thickness>
+  <Thickness x:Key="PagePadding">28,18,28,28</Thickness>
   <x:Double x:Key="CardMinWidth">280</x:Double>
 
   <Style x:Key="PageTitleStyle" TargetType="TextBlock">
@@ -44,7 +48,7 @@
     <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
     <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
     <Setter Property="BorderThickness" Value="1" />
-    <Setter Property="CornerRadius" Value="12" />
+    <Setter Property="CornerRadius" Value="14" />
     <Setter Property="Padding" Value="18,16,18,16" />
   </Style>
 
@@ -58,7 +62,7 @@
     <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
     <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
     <Setter Property="BorderThickness" Value="1" />
-    <Setter Property="CornerRadius" Value="10" />
+    <Setter Property="CornerRadius" Value="12" />
     <Setter Property="Padding" Value="14,12" />
   </Style>
 
@@ -127,17 +131,16 @@
   </Style>
 
   <Style x:Key="SettingComboBoxStyle" TargetType="ComboBox">
-    <Setter Property="MinWidth" Value="260" />
-    <Setter Property="MaxWidth" Value="320" />
-    <Setter Property="MinHeight" Value="48" />
-    <Setter Property="Padding" Value="14,8,20,8" />
+    <Setter Property="MinHeight" Value="40" />
+    <Setter Property="Padding" Value="14,8,36,8" />
     <Setter Property="CornerRadius" Value="8" />
     <Setter Property="MaxDropDownHeight" Value="380" />
     <Setter Property="VerticalAlignment" Value="Center" />
+    <Setter Property="HorizontalContentAlignment" Value="Left" />
     <Setter Property="Background" Value="{ThemeResource ControlFillColorDefaultBrush}" />
     <Setter Property="BorderBrush" Value="{ThemeResource ControlStrokeColorDefaultBrush}" />
     <Setter Property="BorderThickness" Value="1" />
-    <Setter Property="IsTextSearchEnabled" Value="True" />
+    <Setter Property="IsTextSearchEnabled" Value="False" />
     <Setter Property="FocusVisualPrimaryThickness" Value="2" />
     <Setter Property="FocusVisualSecondaryThickness" Value="1" />
     <Setter Property="FocusVisualMargin" Value="-3" />
@@ -169,7 +172,35 @@
     <Setter Property="Background" Value="Transparent" />
     <Setter Property="BorderBrush" Value="{ThemeResource ControlStrokeColorDefaultBrush}" />
     <Setter Property="BorderThickness" Value="1" />
-    <Setter Property="CornerRadius" Value="6" />
+    <Setter Property="CornerRadius" Value="8" />
+    <Setter Property="FocusVisualPrimaryThickness" Value="2" />
+    <Setter Property="FocusVisualSecondaryThickness" Value="1" />
+    <Setter Property="FocusVisualMargin" Value="-3" />
+  </Style>
+
+  <Style x:Key="DashboardActionButtonStyle" TargetType="Button">
+    <Setter Property="MinWidth" Value="88" />
+    <Setter Property="MinHeight" Value="36" />
+    <Setter Property="Padding" Value="14,6" />
+    <Setter Property="FontSize" Value="12" />
+    <Setter Property="VerticalAlignment" Value="Center" />
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="BorderBrush" Value="{ThemeResource ControlStrokeColorDefaultBrush}" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="CornerRadius" Value="18" />
+    <Setter Property="FocusVisualPrimaryThickness" Value="2" />
+    <Setter Property="FocusVisualSecondaryThickness" Value="1" />
+    <Setter Property="FocusVisualMargin" Value="-3" />
+  </Style>
+
+  <Style x:Key="HistoryActionButtonStyle" TargetType="Button">
+    <Setter Property="MinHeight" Value="40" />
+    <Setter Property="Padding" Value="14,8" />
+    <Setter Property="CornerRadius" Value="10" />
+    <Setter Property="FontSize" Value="13" />
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="BorderBrush" Value="{ThemeResource ControlStrokeColorDefaultBrush}" />
+    <Setter Property="BorderThickness" Value="1" />
     <Setter Property="FocusVisualPrimaryThickness" Value="2" />
     <Setter Property="FocusVisualSecondaryThickness" Value="1" />
     <Setter Property="FocusVisualMargin" Value="-3" />
