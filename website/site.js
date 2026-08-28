@@ -9,7 +9,7 @@
   const en = tables["en-US"] || {};
   const extraI18n = {
     "download.cardTitle": "PrivacyGuard for Windows — $19.99",
-   "download.cardBody": "Get the latest x64 installer from GitHub Releases. Windows SmartScreen may warn until the file is Authenticode-signed. Prefer this site or the official GitHub repo — not random mirrors.",
+   "download.cardBody":"One-time purchase. After checkout you get the x64 installer. Buy only from this site.",
     "download.get": "Buy for $19.99"
   };
   Object.assign(en, extraI18n);
