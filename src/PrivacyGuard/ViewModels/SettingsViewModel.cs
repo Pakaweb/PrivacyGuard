@@ -20,7 +20,7 @@ public partial class SettingsViewModel : ObservableObject
     private readonly ITrayIconService _tray;
     private readonly IResetMonitorService _reset;
     private readonly ILogger<SettingsViewModel> _logger;
-    private bool _suppressLanguageChanges = true;
+    private bool _suppressPreferenceChanges = true;
 
     public SettingsViewModel(
         ISettingsService settings,
@@ -68,7 +68,7 @@ public partial class SettingsViewModel : ObservableObject
             }
         ];
 
-        _selectedTheme = Themes.First(option => option.Theme == settings.Current.Theme);
+        _selectedTheme = Themes.FirstOrDefault(option => option.Theme == settings.Current.Theme) ?? Themes[0];
         _selectedLanguage = _loc.Resolve(settings.Current.Language);
         _confirmBeforeApply = settings.Current.ConfirmBeforeApply;
         _recordHistory = settings.Current.RecordHistory;
@@ -80,11 +80,47 @@ public partial class SettingsViewModel : ObservableObject
 
     public ILocalizationService Loc { get; }
 
-    public void AllowLanguageChanges() => _suppressLanguageChanges = false;
+    public void AllowPreferenceChanges() => _suppressPreferenceChanges = false;
 
     public IReadOnlyList<ThemeOption> Themes { get; }
 
-    public IReadOnlyList<LanguageOption> Languages => _loc.Languages;
+    public string LanguageLabel => SelectedLanguage.NativeName;
+
+    public bool IsThemeDefault
+    {
+        get => SelectedTheme.Theme == ElementTheme.Default;
+        set
+        {
+            if (value)
+            {
+                SelectedTheme = Themes[0];
+            }
+        }
+    }
+
+    public bool IsThemeLight
+    {
+        get => SelectedTheme.Theme == ElementTheme.Light;
+        set
+        {
+            if (value)
+            {
+                SelectedTheme = Themes[1];
+            }
+        }
+    }
+
+    public bool IsThemeDark
+    {
+        get => SelectedTheme.Theme == ElementTheme.Dark;
+        set
+        {
+            if (value)
+            {
+                SelectedTheme = Themes[2];
+            }
+        }
+    }
 
     [ObservableProperty]
     private ThemeOption _selectedTheme;
@@ -126,13 +162,24 @@ public partial class SettingsViewModel : ObservableObject
 
     partial void OnSelectedThemeChanged(ThemeOption value)
     {
+        OnPropertyChanged(nameof(IsThemeDefault));
+        OnPropertyChanged(nameof(IsThemeLight));
+        OnPropertyChanged(nameof(IsThemeDark));
+
+        if (_suppressPreferenceChanges || value is null || _settings.Current.Theme == value.Theme)
+        {
+            return;
+        }
+
         _theme.Apply(value.Theme);
         _ = PersistAsync();
     }
 
     partial void OnSelectedLanguageChanged(LanguageOption value)
     {
-        if (_suppressLanguageChanges || value is null)
+        OnPropertyChanged(nameof(LanguageLabel));
+
+        if (_suppressPreferenceChanges || value is null)
         {
             return;
         }
@@ -155,6 +202,11 @@ public partial class SettingsViewModel : ObservableObject
 
     partial void OnStartWithWindowsChanged(bool value)
     {
+        if (_suppressPreferenceChanges)
+        {
+            return;
+        }
+
         if (!_autoStart.SetEnabled(value))
         {
             _startWithWindows = !value;
@@ -169,18 +221,33 @@ public partial class SettingsViewModel : ObservableObject
 
     partial void OnConfirmBeforeApplyChanged(bool value)
     {
+        if (_suppressPreferenceChanges)
+        {
+            return;
+        }
+
         _settings.Current.ConfirmBeforeApply = value;
         _ = PersistAsync();
     }
 
     partial void OnRecordHistoryChanged(bool value)
     {
+        if (_suppressPreferenceChanges)
+        {
+            return;
+        }
+
         _settings.Current.RecordHistory = value;
         _ = PersistAsync();
     }
 
     partial void OnEnableTrayChanged(bool value)
     {
+        if (_suppressPreferenceChanges)
+        {
+            return;
+        }
+
         _settings.Current.EnableTray = value;
         _tray.SetEnabled(value);
         _ = PersistAsync();
@@ -188,12 +255,22 @@ public partial class SettingsViewModel : ObservableObject
 
     partial void OnCloseToTrayChanged(bool value)
     {
+        if (_suppressPreferenceChanges)
+        {
+            return;
+        }
+
         _settings.Current.CloseToTray = value;
         _ = PersistAsync();
     }
 
     partial void OnCheckForWindowsResetsChanged(bool value)
     {
+        if (_suppressPreferenceChanges)
+        {
+            return;
+        }
+
         _settings.Current.CheckForWindowsResets = value;
         _ = PersistAsync();
         _reset.ApplyPreferences();
