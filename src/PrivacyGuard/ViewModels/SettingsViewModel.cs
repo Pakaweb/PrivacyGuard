@@ -84,6 +84,8 @@ public partial class SettingsViewModel : ObservableObject
 
     public IReadOnlyList<ThemeOption> Themes { get; }
 
+    public IReadOnlyList<LanguageOption> Languages => _loc.Languages;
+
     public string LanguageLabel => SelectedLanguage.NativeName;
 
     public bool IsThemeDefault
