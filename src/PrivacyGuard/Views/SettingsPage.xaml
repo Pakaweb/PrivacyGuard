@@ -2,10 +2,12 @@
     x:Class="PrivacyGuard.Views.SettingsPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:models="using:PrivacyGuard.Models"
     NavigationCacheMode="Disabled">
 
-  <ScrollViewer>
+  <ScrollViewer
+      BringIntoViewOnFocusChange="False"
+      HorizontalScrollBarVisibility="Disabled"
+      VerticalScrollBarVisibility="Auto">
     <StackPanel Padding="{StaticResource PagePadding}" MaxWidth="880" Spacing="16">
       <StackPanel Spacing="4">
         <TextBlock Style="{StaticResource PageTitleStyle}" Text="{x:Bind ViewModel.Loc.T(ViewModel.Loc.Stamp, 'settings.title'), Mode=OneWay}" />
@@ -59,24 +61,23 @@
                     Text="{x:Bind ViewModel.Loc.T(ViewModel.Loc.Stamp, 'settings.themeDesc'), Mode=OneWay}"
                     TextWrapping="Wrap" />
               </StackPanel>
-              <ComboBox
+              <StackPanel
                   Grid.Column="2"
-                  DisplayMemberPath="Title"
-                  ItemsSource="{x:Bind ViewModel.Themes}"
-                  SelectedItem="{x:Bind ViewModel.SelectedTheme, Mode=TwoWay}"
-                  Style="{StaticResource SettingComboBoxStyle}">
-                <ComboBox.ItemTemplate>
-                  <DataTemplate x:DataType="models:ThemeOption">
-                    <StackPanel MinWidth="220" Padding="0,4" Spacing="1">
-                      <TextBlock FontWeight="SemiBold" Text="{x:Bind Title}" />
-                      <TextBlock
-                          FontSize="11"
-                          Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                          Text="{x:Bind Subtitle}" />
-                    </StackPanel>
-                  </DataTemplate>
-                </ComboBox.ItemTemplate>
-              </ComboBox>
+                  VerticalAlignment="Center"
+                  Spacing="2">
+                <RadioButton
+                    Content="{x:Bind ViewModel.Loc.T(ViewModel.Loc.Stamp, 'settings.themeDefault'), Mode=OneWay}"
+                    GroupName="PrivacyGuardTheme"
+                    IsChecked="{x:Bind ViewModel.IsThemeDefault, Mode=TwoWay}" />
+                <RadioButton
+                    Content="{x:Bind ViewModel.Loc.T(ViewModel.Loc.Stamp, 'settings.themeLight'), Mode=OneWay}"
+                    GroupName="PrivacyGuardTheme"
+                    IsChecked="{x:Bind ViewModel.IsThemeLight, Mode=TwoWay}" />
+                <RadioButton
+                    Content="{x:Bind ViewModel.Loc.T(ViewModel.Loc.Stamp, 'settings.themeDark'), Mode=OneWay}"
+                    GroupName="PrivacyGuardTheme"
+                    IsChecked="{x:Bind ViewModel.IsThemeDark, Mode=TwoWay}" />
+              </StackPanel>
             </Grid>
           </Grid>
         </Border>
@@ -120,25 +121,17 @@
                     Text="{x:Bind ViewModel.Loc.T(ViewModel.Loc.Stamp, 'settings.languageDesc'), Mode=OneWay}"
                     TextWrapping="Wrap" />
               </StackPanel>
-              <ComboBox
+              <DropDownButton
+                  x:Name="LanguageButton"
                   Grid.Column="2"
-                  DisplayMemberPath="NativeName"
-                  ItemsSource="{x:Bind ViewModel.Languages}"
-                  PlaceholderText="{x:Bind ViewModel.Loc.T(ViewModel.Loc.Stamp, 'settings.languagePlaceholder'), Mode=OneWay}"
-                  SelectedItem="{x:Bind ViewModel.SelectedLanguage, Mode=TwoWay}"
-                  Style="{StaticResource SettingComboBoxStyle}">
-                <ComboBox.ItemTemplate>
-                  <DataTemplate x:DataType="models:LanguageOption">
-                    <StackPanel MinWidth="240" Padding="0,4" Spacing="1">
-                      <TextBlock FontWeight="SemiBold" Text="{x:Bind NativeName}" />
-                      <TextBlock
-                          FontSize="11"
-                          Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                          Text="{x:Bind SecondaryLabel}" />
-                    </StackPanel>
-                  </DataTemplate>
-                </ComboBox.ItemTemplate>
-              </ComboBox>
+                  MinWidth="180"
+                  HorizontalAlignment="Right"
+                  VerticalAlignment="Center"
+                  Content="{x:Bind ViewModel.LanguageLabel, Mode=OneWay}">
+                <DropDownButton.Flyout>
+                  <MenuFlyout x:Name="LanguageFlyout" />
+                </DropDownButton.Flyout>
+              </DropDownButton>
             </Grid>
           </Grid>
         </Border>
