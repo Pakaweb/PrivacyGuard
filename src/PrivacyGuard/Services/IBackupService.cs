@@ -9,4 +9,8 @@ public interface IBackupService
     Task<IReadOnlyList<RestorePoint>> GetRecentAsync(int take = 50, CancellationToken cancellationToken = default);
 
     Task<RestorePoint?> GetAsync(long id, CancellationToken cancellationToken = default);
+
+    Task DeleteAsync(IReadOnlyList<long> ids, CancellationToken cancellationToken = default);
+
+    Task ClearAsync(CancellationToken cancellationToken = default);
 }

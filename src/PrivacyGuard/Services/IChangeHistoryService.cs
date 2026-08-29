@@ -9,4 +9,8 @@ public interface IChangeHistoryService
     Task<long> InsertAsync(ChangeRecord record, CancellationToken cancellationToken = default);
 
     Task MarkRevertedAsync(long id, CancellationToken cancellationToken = default);
+
+    Task DeleteAsync(IReadOnlyList<long> ids, CancellationToken cancellationToken = default);
+
+    Task ClearAsync(CancellationToken cancellationToken = default);
 }

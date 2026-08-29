@@ -110,6 +110,53 @@ public sealed class ChangeHistoryService : IChangeHistoryService
         await command.ExecuteNonQueryAsync(cancellationToken);
     }
 
+    public async Task DeleteAsync(IReadOnlyList<long> ids, CancellationToken cancellationToken = default)
+    {
+        if (ids.Count == 0)
+        {
+            return;
+        }
+
+        await _gate.WaitAsync(cancellationToken);
+        try
+        {
+            await using var connection = new SqliteConnection(GetConnectionString());
+            await connection.OpenAsync(cancellationToken);
+            await using var transaction = await connection.BeginTransactionAsync(cancellationToken);
+            foreach (var id in ids)
+            {
+                await using var command = connection.CreateCommand();
+                command.Transaction = (SqliteTransaction)transaction;
+                command.CommandText = "DELETE FROM ChangeHistory WHERE Id = $id;";
+                command.Parameters.AddWithValue("$id", id);
+                await command.ExecuteNonQueryAsync(cancellationToken);
+            }
+
+            await transaction.CommitAsync(cancellationToken);
+        }
+        finally
+        {
+            _gate.Release();
+        }
+    }
+
+    public async Task ClearAsync(CancellationToken cancellationToken = default)
+    {
+        await _gate.WaitAsync(cancellationToken);
+        try
+        {
+            await using var connection = new SqliteConnection(GetConnectionString());
+            await connection.OpenAsync(cancellationToken);
+            await using var command = connection.CreateCommand();
+            command.CommandText = "DELETE FROM ChangeHistory;";
+            await command.ExecuteNonQueryAsync(cancellationToken);
+        }
+        finally
+        {
+            _gate.Release();
+        }
+    }
+
     private static string GetConnectionString() => new SqliteConnectionStringBuilder
     {
         DataSource = AppPaths.DatabasePath,
