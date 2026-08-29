@@ -1,3 +1,4 @@
+using Microsoft.UI.Xaml;
 using PrivacyGuard.Helpers;
 using PrivacyGuard.Services;
 
@@ -26,6 +27,7 @@ public partial class HistoryChangeItem : ObservableObject
         Record = record;
         OldLabel = PrivacyCatalog.FormatValue(record.SettingKey, record.OldValue);
         NewLabel = PrivacyCatalog.FormatValue(record.SettingKey, record.NewValue);
+        OldTone = ToneFor(record.SettingKey, record.OldValue);
         NewTone = ToneFor(record.SettingKey, record.NewValue);
         TimeLabel = record.Timestamp.ToLocalTime().ToString("t");
         DateLabel = record.Timestamp.ToLocalTime().ToString("MMM d");
@@ -43,6 +45,8 @@ public partial class HistoryChangeItem : ObservableObject
     public string OldLabel { get; }
 
     public string NewLabel { get; }
+
+    public string OldTone { get; }
 
     public string NewTone { get; }
 
@@ -93,12 +97,15 @@ public partial class HistoryChangeItem : ObservableObject
 
     public string CardState => $"{StatusKind}:{(IsSelected ? 1 : 0)}";
 
+    public Thickness CardBorderThickness => IsSelected ? new Thickness(2) : new Thickness(1);
+
     public string MetaLabel => ShowDateInMeta
         ? $"{DateLabel} · {TimeLabel} · {ProfileLabel}"
         : $"{TimeLabel} · {ProfileLabel}";
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(CardState))]
+    [NotifyPropertyChangedFor(nameof(CardBorderThickness))]
     private bool _isSelected;
 
     [ObservableProperty]
@@ -146,8 +153,11 @@ public partial class HistoryRestoreItem : ObservableObject
 
     public string CardState => IsSelected ? "selected" : "idle";
 
+    public Thickness CardBorderThickness => IsSelected ? new Thickness(2) : new Thickness(1);
+
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(CardState))]
+    [NotifyPropertyChangedFor(nameof(CardBorderThickness))]
     private bool _isSelected;
 
     [ObservableProperty]
