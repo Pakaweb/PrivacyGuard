@@ -57,6 +57,14 @@ public partial class PrivacyStatusItem : ObservableObject
     [ObservableProperty]
     private bool _isRecentlyChanged;
 
+    public string? StatusHint { get; init; }
+
+    public bool ShowStatusHint => !string.IsNullOrWhiteSpace(StatusHint);
+
+    public string IntentBadge { get; init; } = string.Empty;
+
+    public bool ShowIntentBadge => !string.IsNullOrWhiteSpace(IntentBadge);
+
     public IAsyncRelayCommand<PrivacyStatusItem?>? ChangeCommand { get; set; }
 
     public string Glyph => SettingKey switch
@@ -94,7 +102,7 @@ public partial class PrivacyStatusItem : ObservableObject
 
     public string RequiresAdminTooltip { get; init; } = string.Empty;
 
-    public bool ShowValueLabel => IsServiceControl;
+    public bool ShowValueLabel => true;
 
     public string ToggleOnContent => string.Empty;
 
