@@ -156,6 +156,23 @@ public static class PrivacyCatalog
         };
     }
 
+    /// <summary>
+    /// Dashboard status color. DiagTrack left running is a Recommended trade-off, not a failure.
+    /// Scoring still uses <see cref="HealthFor"/> / service-running checks.
+    /// </summary>
+    public static PrivacyHealth DisplayHealthFor(string settingKey, string? canonicalValue)
+    {
+        if (IsRecommendedServiceTradeOff(settingKey, canonicalValue))
+        {
+            return PrivacyHealth.Partial;
+        }
+
+        return HealthFor(settingKey, canonicalValue);
+    }
+
+    public static bool IsRecommendedServiceTradeOff(string settingKey, string? canonicalValue) =>
+        settingKey == PrivacySettingKeys.DiagTrack && !ServiceLooksHardened(canonicalValue);
+
     public static string FormatValue(string settingKey, string? canonicalValue)
     {
         if (canonicalValue is null)
@@ -257,6 +274,35 @@ public static class PrivacyCatalog
     };
 
     /// <summary>
+    /// Localization key for the Privacy Score card summary. DiagTrack copy follows the live service state.
+    /// </summary>
+    public static string DashboardScoreSummaryKey(PrivacySnapshot? snapshot)
+    {
+        if (snapshot is null)
+        {
+            return "dashboard.scoreLoading";
+        }
+
+        return snapshot.OverallHealth switch
+        {
+            PrivacyHealth.Protected => IsServiceRunning(snapshot.DiagTrack)
+                ? "dashboard.scoreProtected"
+                : "dashboard.scoreProtectedStopped",
+            PrivacyHealth.Partial => "dashboard.scorePartial",
+            _ => "dashboard.scoreCollecting"
+        };
+    }
+
+    private static string DiagTrackScoreDetail(ServiceStateInfo info)
+    {
+        var status = FormatValue(PrivacySettingKeys.DiagTrack, info.CanonicalValue);
+        var note = IsServiceRunning(info)
+            ? L("dashboard.scoreFactorDiagRunning")
+            : L("dashboard.scoreFactorDiagStopped");
+        return $"{status} — {note}";
+    }
+
+    /// <summary>
     /// Score weights used by the dashboard breakdown. Keep aligned with <c>PrivacyService</c>.
     /// </summary>
     public static IReadOnlyList<ScoreFactor> BuildScoreFactors(PrivacySnapshot snapshot)
@@ -272,7 +318,7 @@ public static class PrivacyCatalog
         return
         [
             Factor(L("factor.telemetry"), FormatValue(PrivacySettingKeys.TelemetryLevel, ((int)snapshot.TelemetryLevel).ToString()), telemetryPoints, 20, telemetryPoints >= 16),
-            Factor(L("factor.diagTrack"), FormatValue(PrivacySettingKeys.DiagTrack, snapshot.DiagTrack.CanonicalValue), IsServiceRunning(snapshot.DiagTrack) ? 0 : 12, 12, !IsServiceRunning(snapshot.DiagTrack)),
+            Factor(L("factor.diagTrack"), DiagTrackScoreDetail(snapshot.DiagTrack), IsServiceRunning(snapshot.DiagTrack) ? 0 : 12, 12, !IsServiceRunning(snapshot.DiagTrack)),
             Factor(L("factor.dmw"), FormatValue(PrivacySettingKeys.DmwAppPush, snapshot.DmwAppPush.CanonicalValue), IsServiceRunning(snapshot.DmwAppPush) ? 0 : 8, 8, !IsServiceRunning(snapshot.DmwAppPush)),
             Factor(L("factor.advertising"), snapshot.AdvertisingIdEnabled ? L("common.on") : L("common.off"), snapshot.AdvertisingIdEnabled ? 0 : 12, 12, !snapshot.AdvertisingIdEnabled),
             Factor(L("factor.activity"), snapshot.ActivityHistoryEnabled ? L("common.on") : L("common.off"), snapshot.ActivityHistoryEnabled ? 0 : 12, 12, !snapshot.ActivityHistoryEnabled),
