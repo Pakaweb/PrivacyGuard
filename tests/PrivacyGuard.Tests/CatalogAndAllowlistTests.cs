@@ -1,5 +1,6 @@
 using PrivacyGuard.Helpers;
 using PrivacyGuard.Models;
+using System.ServiceProcess;
 using Xunit;
 
 namespace PrivacyGuard.Tests;
@@ -46,6 +47,48 @@ public sealed class PrivacyCatalogTests
         };
 
         Assert.True(PrivacyCatalog.ScoreFromValues(values) < 40);
+    }
+
+    [Fact]
+    public void DisplayHealthFor_DiagTrackRunning_IsPartialTradeOff()
+    {
+        Assert.Equal(PrivacyHealth.Partial, PrivacyCatalog.DisplayHealthFor(PrivacySettingKeys.DiagTrack, "Running:Automatic"));
+        Assert.Equal(PrivacyHealth.Collecting, PrivacyCatalog.HealthFor(PrivacySettingKeys.DiagTrack, "Running:Automatic"));
+        Assert.True(PrivacyCatalog.IsRecommendedServiceTradeOff(PrivacySettingKeys.DiagTrack, "Running:Automatic"));
+        Assert.Equal(PrivacyHealth.Protected, PrivacyCatalog.DisplayHealthFor(PrivacySettingKeys.DiagTrack, "Stopped:Disabled"));
+        Assert.Equal(PrivacyHealth.Collecting, PrivacyCatalog.DisplayHealthFor(PrivacySettingKeys.DmwAppPush, "Running:Automatic"));
+    }
+
+    [Fact]
+    public void DashboardScoreSummaryKey_Protected_MatchesDiagTrackState()
+    {
+        Assert.Equal("dashboard.scoreLoading", PrivacyCatalog.DashboardScoreSummaryKey(null));
+
+        var running = new PrivacySnapshot
+        {
+            OverallHealth = PrivacyHealth.Protected,
+            DiagTrack = new ServiceStateInfo
+            {
+                ServiceName = PrivacySettingKeys.DiagTrackService,
+                Exists = true,
+                Status = ServiceControllerStatus.Running,
+                StartType = ServiceStartMode.Automatic
+            }
+        };
+        Assert.Equal("dashboard.scoreProtected", PrivacyCatalog.DashboardScoreSummaryKey(running));
+
+        var stopped = new PrivacySnapshot
+        {
+            OverallHealth = PrivacyHealth.Protected,
+            DiagTrack = new ServiceStateInfo
+            {
+                ServiceName = PrivacySettingKeys.DiagTrackService,
+                Exists = true,
+                Status = ServiceControllerStatus.Stopped,
+                StartType = ServiceStartMode.Disabled
+            }
+        };
+        Assert.Equal("dashboard.scoreProtectedStopped", PrivacyCatalog.DashboardScoreSummaryKey(stopped));
     }
 
     [Theory]
