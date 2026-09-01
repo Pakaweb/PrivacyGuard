@@ -65,6 +65,7 @@ public partial class DashboardViewModel : ObservableObject
     public IReadOnlyList<PrivacySection> Sections { get; }
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(ShowRecommendedAppliedBadge))]
     private PrivacySnapshot? _snapshot;
 
     [ObservableProperty]
@@ -109,6 +110,7 @@ public partial class DashboardViewModel : ObservableObject
     [NotifyPropertyChangedFor(nameof(HasPendingRecommendedChanges))]
     [NotifyPropertyChangedFor(nameof(ImproveButtonLabel))]
     [NotifyPropertyChangedFor(nameof(CanApplyRecommended))]
+    [NotifyPropertyChangedFor(nameof(ShowRecommendedAppliedBadge))]
     private int _pendingRecommendedCount;
 
     public bool IsElevated => _elevation.IsElevated;
@@ -131,14 +133,7 @@ public partial class DashboardViewModel : ObservableObject
         _ => _loc.Get("health.unknown")
     };
 
-    public string ScoreSummary => Snapshot is null
-        ? _loc.Get("dashboard.scoreLoading")
-        : Snapshot.OverallHealth switch
-        {
-            PrivacyHealth.Protected => _loc.Get("dashboard.scoreProtected"),
-            PrivacyHealth.Partial => _loc.Get("dashboard.scorePartial"),
-            _ => _loc.Get("dashboard.scoreCollecting")
-        };
+    public string ScoreSummary => _loc.Get(PrivacyCatalog.DashboardScoreSummaryKey(Snapshot));
 
     public string EditionLabel => Snapshot?.WindowsEdition ?? "Windows";
 
@@ -148,6 +143,8 @@ public partial class DashboardViewModel : ObservableObject
     public PrivacyHealth OverallHealth => Snapshot?.OverallHealth ?? PrivacyHealth.Partial;
 
     public bool HasPendingRecommendedChanges => PendingRecommendedCount > 0;
+
+    public bool ShowRecommendedAppliedBadge => Snapshot is not null && !HasPendingRecommendedChanges;
 
     public string ImproveButtonLabel => HasPendingRecommendedChanges
         ? _loc.Get("dashboard.improve")
@@ -248,7 +245,7 @@ public partial class DashboardViewModel : ObservableObject
         }
     }
 
-    [RelayCommand(CanExecute = nameof(CanApplyChanges))]
+    [RelayCommand(CanExecute = nameof(CanApplyTelemetry))]
     private async Task ApplyTelemetryAsync()
     {
         if (Snapshot is null)
@@ -256,17 +253,33 @@ public partial class DashboardViewModel : ObservableObject
             return;
         }
 
-        var operation = _privacy.BuildTelemetryOperation(SelectedTelemetryLevel, Snapshot);
-        if (operation is null)
+        try
         {
-            ShowToast(_loc.Get("dashboard.alreadySet"), _loc.Get("dashboard.alreadySetMsg"), InfoMessageKind.Informational);
-            return;
-        }
+            if (!IsElevated)
+            {
+                await _dialogs.ShowErrorAsync(
+                    _loc.Get("profiles.adminTitle"),
+                    _loc.Get("profiles.adminBody"));
+                return;
+            }
 
-        await ApplyWithConfirmationAsync(
-            [operation],
-            _loc.Get("dashboard.setTelemetry", SelectedTelemetryLevel),
-            operation.SideEffectWarning);
+            var operation = _privacy.BuildTelemetryOperation(SelectedTelemetryLevel, Snapshot);
+            if (operation is null)
+            {
+                ShowToast(_loc.Get("dashboard.alreadySet"), _loc.Get("dashboard.alreadySetMsg"), InfoMessageKind.Informational);
+                return;
+            }
+
+            await ApplyWithConfirmationAsync(
+                [operation],
+                _loc.Get("dashboard.setTelemetry", PrivacyCatalog.FormatValue(PrivacySettingKeys.TelemetryLevel, operation.NewValue)),
+                operation.SideEffectWarning);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Apply telemetry failed.");
+            await _dialogs.ShowErrorAsync(_loc.Get("dashboard.changeFailed"), FriendlyError(ex));
+        }
     }
 
     [RelayCommand(CanExecute = nameof(CanApplyChanges))]
@@ -466,6 +479,8 @@ public partial class DashboardViewModel : ObservableObject
                 };
 
                 lastChanged.TryGetValue(setting.SettingKey, out var changedAt);
+                var valueLabel = PrivacyCatalog.FormatValue(setting.SettingKey, setting.Value);
+                var isTradeOff = PrivacyCatalog.IsRecommendedServiceTradeOff(setting.SettingKey, setting.Value);
                 var item = new PrivacyStatusItem
                 {
                     SettingKey = setting.SettingKey,
@@ -479,12 +494,16 @@ public partial class DashboardViewModel : ObservableObject
                     IsHighImpact = PrivacyCatalog.IsHighImpact(setting.SettingKey),
                     NeedsElevationHint = setting.RequiresAdmin && !_elevation.IsElevated,
                     RequiresAdminTooltip = _loc.Get("dashboard.requiresAdmin"),
-                    ValueLabel = PrivacyCatalog.FormatValue(setting.SettingKey, setting.Value),
+                    ValueLabel = valueLabel,
                     CanonicalValue = setting.Value,
-                    Health = PrivacyCatalog.HealthFor(setting.SettingKey, setting.Value),
+                    Health = PrivacyCatalog.DisplayHealthFor(setting.SettingKey, setting.Value),
                     IsOn = isOn,
+                    IntentBadge = isTradeOff ? _loc.Get("dashboard.diagTrackKeptBadge") : string.Empty,
+                    StatusHint = setting.SettingKey == PrivacySettingKeys.DiagTrack
+                        ? _loc.Get(isOn ? "dashboard.diagTrackKeptRunning" : "dashboard.diagTrackStoppedHint")
+                        : null,
                     LastChangedLabel = changedAt == default
-                        ? _loc.Get("dashboard.noLocalChanges")
+                        ? _loc.Get("dashboard.noHistory", valueLabel)
                         : _loc.Get("dashboard.lastChanged", changedAt.LocalDateTime.ToString("g")),
                     IsRecentlyChanged = _recentlyChangedKeys.Contains(setting.SettingKey),
                     ChangeCommand = ToggleSettingCommand
@@ -580,7 +599,7 @@ public partial class DashboardViewModel : ObservableObject
     private static bool MatchesCardFilter(PrivacyStatusItem item, int filter) =>
         filter switch
         {
-            1 => item.Health != PrivacyHealth.Protected,
+            1 => item.Health == PrivacyHealth.Collecting,
             2 => item.Health == PrivacyHealth.Protected,
             _ => true
         };
@@ -615,6 +634,8 @@ public partial class DashboardViewModel : ObservableObject
         OnPropertyChanged(nameof(OverallHealth));
         OnPropertyChanged(nameof(HasPendingRecommendedChanges));
         OnPropertyChanged(nameof(ImproveButtonLabel));
+        OnPropertyChanged(nameof(CanApplyRecommended));
+        OnPropertyChanged(nameof(ShowRecommendedAppliedBadge));
     }
 
     private string FriendlyError(Exception ex) =>
